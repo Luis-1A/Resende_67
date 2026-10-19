@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anderson — Uma noite feita para você</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;background:#010206;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;overflow:hidden;color:#f6f1e7;font:500 clamp(1rem,4vw,1.2rem)/1.6 "Nunito",system-ui,sans-serif}
+#cv{position:fixed;inset:0;width:100%;height:100%}
+#txt{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10vh 6vw 8vh;text-shadow:0 2px 14px rgba(0,0,0,.7)}
+#txt.low{justify-content:flex-start;padding-top:40vh}
+#hv{position:fixed;top:calc(8vh + env(safe-area-inset-top,0px));left:50%;width:110px;margin-left:-55px}
+.t{opacity:0;transform:translateY(12px);transition:opacity 1.3s ease,transform 1.5s cubic-bezier(.22,1,.36,1);margin:.5em 0;max-width:34em}
+.t.in{opacity:1;transform:none}
+.sub{font-size:clamp(1.1rem,4.6vw,1.5rem)}
+.ttl{margin:0;font:600 clamp(2.2rem,12.5vw,6rem)/1.1 "Fraunces",Georgia,serif;letter-spacing:.04em;color:#f7e2ad;text-shadow:0 0 28px rgba(243,213,138,.45)}
+.ttl.mid{font-size:clamp(1.6rem,8vw,3.2rem)}
+.w{display:inline-block;white-space:nowrap}
+.L{display:inline-block;opacity:0;transform:translateY(.5em);transition:opacity 1s ease,transform 1.2s cubic-bezier(.16,1,.3,1)}
+.ttl.in .L{opacity:1;transform:none}
+.paper,.card{width:100%;max-width:34rem;max-height:74vh;overflow-y:auto;text-align:left;padding:1.4rem 1.3rem;border-radius:8px;position:relative;text-shadow:none}
+.paper{background:#f1e7d0;color:#3a2f25;box-shadow:0 18px 50px rgba(0,0,0,.6),inset 0 0 40px rgba(120,90,50,.2);font-family:"Fraunces",Georgia,serif;font-size:clamp(.95rem,3.8vw,1.1rem)}
+.paper h2{margin:0 0 1rem;font-size:1.05rem;letter-spacing:.08em;text-align:center;min-height:1.4em}
+.paper .t{margin:.8em 0;max-width:none}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);line-height:1.8}
+.card .t{margin:.9em 0;max-width:none}
+.ink{text-align:center;font-size:1.7rem;color:#111}
+.crown{width:72px;margin:0 auto .4rem;transform:rotate(10deg)}
+.crown.fall{animation:drop 1.8s cubic-bezier(.5,0,1,1) forwards}
+@keyframes drop{to{transform:translateY(70vh) rotate(260deg);opacity:0}}
+.candle{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 55%,rgba(255,170,80,.3),transparent 55%);animation:fl 2.2s ease-in-out infinite;transition:opacity 2s}
+@keyframes fl{50%{filter:brightness(.8)}}
+.heart{width:100%;height:auto;overflow:visible;display:block}
+.heart path{fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 3.6s ease-in-out,fill 1s,stroke 1s}
+.heart.in path{stroke-dashoffset:0}
+.heart.pulse{animation:pulse 1.2s ease-in-out 2}
+.heart.star path{fill:#f3d58a;stroke:#f3d58a}
+.heart.rise{animation:rise 5s ease-in forwards}
+@keyframes pulse{50%{transform:scale(1.1)}}
+@keyframes rise{to{transform:translateY(-70vh) scale(.25);opacity:0}}
+#hint{position:fixed;left:0;right:0;bottom:calc(18px + env(safe-area-inset-bottom,0px));text-align:center;font-size:.85rem;color:rgba(246,241,231,.75);opacity:0;transition:opacity .8s;pointer-events:none;z-index:4}
+#hint.on{opacity:1}
+#secret{position:fixed;top:calc(18px + env(safe-area-inset-top,0px));right:18px;width:44px;height:44px;padding:0;border:0;background:none;opacity:0;pointer-events:none;transition:opacity 2s;cursor:pointer;z-index:4}
+#secret.on{opacity:.9;pointer-events:auto;animation:tw 2.6s ease-in-out infinite}
+#secret.go{opacity:0;transition:opacity .6s;animation:none}
+#secret svg{width:100%;height:100%;fill:#f3d58a;filter:drop-shadow(0 0 8px rgba(243,213,138,.8))}
+#secret:focus-visible{outline:2px solid #f3d58a;outline-offset:2px}
+@keyframes tw{50%{transform:scale(1.15);opacity:.55}}
+@media (prefers-reduced-motion:reduce){.L{transform:none;transition-delay:0s!important}.candle,#secret.on{animation:none}.crown.fall,.heart.rise{animation-duration:.01s}}
+</style>
+</head>
+<body>
+<canvas id="cv" aria-hidden="true"></canvas>
+<div id="hv" aria-hidden="true"></div>
+<main id="txt" aria-live="polite"></main>
+<div id="hint">toque para continuar</div>
+<button id="secret" type="button" aria-label="Uma estrela escondida"><svg viewBox="0 0 100 100"><path d="M50 6 61 36 94 37 68 57 77 88 50 70 23 88 32 57 6 37 39 36Z"/></svg></button>
+<script>
+(()=>{
+const $=s=>document.querySelector(s),cv=$('#cv'),x=cv.getContext('2d'),txt=$('#txt'),hv=$('#hv'),hint=$('#hint');
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches,TAU=Math.PI*2,R=Math.random,cl=v=>v<0?0:v>1?1:v;
+let W,H,mob,last=0,gt=0,fwOn=false,fwT=0,fwI=1,lT=0,bT=0;
+const hx=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+const PAL={dark:['#010206','#04060e','#05070f','#070a14','#090c18'],night:['#04060f','#0d1f45','#0b1733','#102650','#17335f'],warm:['#1d2552','#e08a72','#2b2d62','#3d3567','#524270'],dusk:['#2a4784','#f3a65f','#2a416f','#37496f','#475270'],candle:['#080504','#1b0f08','#0a0705','#0e0906','#120b07']};
+let cur=PAL.dark.map(hx),tgc=cur;const pal=n=>{tgc=PAL[n].map(hx)};
+const st={star:0,petal:0,g:0,lead:0,flow:0,gold:0,ff:0,lant:0,bal:0,cake:0,sil:0,solo:0,wind:0},tg={...st};
+const RATE={flow:.45,gold:.5,cake:.9,lead:.8};
+const stars=[],pet=[],sh=[],fw=[],gp=[],rs=[],FL=[];
+function size(){W=innerWidth;H=innerHeight;mob=W<640;const d=Math.min(devicePixelRatio||1,2);cv.width=W*d;cv.height=H*d;x.setTransform(d,0,0,d,0,0)}
+size();addEventListener('resize',size);
+for(let i=0;i<(mob?60:110);i++)stars.push({x:R(),y:R()*.6,r:.4+R()*1.3,p:R()*TAU,s:.5+R()*1.5,d:.3+R()*.7});
+const pc=['#f6b8c8','#fbd9e2','#e58aa5','#ffffff'];
+const np=init=>({x:R()*W,y:init?R()*H:-20,s:5+R()*7,vy:25+R()*40,vx:(R()-.5)*20,r:R()*TAU,vr:(R()-.5)*2,p:R()*TAU,c:pc[(R()*4)|0],d:.4+R()*.6});
+for(let i=0;i<(RM?8:mob?18:30);i++)pet.push(np(true));
+const FC=['#ffffff','#f6b8c8','#d9435a','#b99be0','#f3d58a'],FD=[0,.3,.45,.55,.7];
+{const n=mob?13:24;for(let i=0;i<n;i++){const ty=i%5;FL.push({x:(i+.3+R()*.4)/n*W,near:i%3==0,h:(.07+R()*.12)*(i%3==0?1.3:1),c:FC[ty],d:FD[ty]+R()*.1,gold:ty==4,ph:R()})}FL.sort((a,b)=>a.near-b.near)}
+const FF=Array.from({length:mob?10:18},()=>({a:R()*TAU,b:R()*TAU,sx:.1+R()*.2,sy:.1+R()*.15,y:.35+R()*.5}));
+const gc=['#f3d58a','#f6b8c8','#9fc6ea','#fff'],bc=['#f6b8c8','#9fc6ea','#f3d58a','#fff','#c9a8ee','#e46b7e'];
+function shoot(g){if(!RM)sh.push({x:-50,y:H*(.1+R()*.2),vx:W*.55,vy:H*.28,l:0,g})}
+function burst(){const cx=W*(.15+R()*.7),cy=H*(.1+R()*.3),c=gc[(R()*4)|0],n=mob?26:40;for(let i=0;i<n;i++){const a=i/n*TAU+R()*.2,v=60+R()*110;fw.push({x:cx,y:cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:0,c})}}
+function spawn(k){rs.push({k,x:R()*W,y:H+30,vy:(k=='l'?25:45)+R()*30,p:R()*TAU,s:k=='l'?9+R()*8:16+R()*10,c:bc[(R()*6)|0]})}
+function g18(){const o=document.createElement('canvas');o.width=200;o.height=120;const c=o.getContext('2d');c.font='700 120px Fraunces,Georgia,serif';c.textAlign='center';c.textBaseline='middle';c.fillText('18',100,64);
+  const d=c.getImageData(0,0,200,120).data,sc=Math.min(W*.8,460)/200;gp.length=0;
+  for(let j=0;j<120;j+=4)for(let i=0;i<200;i+=4)if(d[(j*200+i)*4+3]>128)gp.push({tx:W/2+(i-100)*sc,ty:H*.26+(j-60)*sc,x:R()*W,y:R()*H,p:R()*TAU});
+  gt=0;tg.g=1}
+function loop(n){
+  const dt=Math.min((n-(last||n))/1000,.1),t=n/1000;last=n;
+  for(const k in tg)st[k]+=(tg[k]-st[k])*Math.min(1,dt*(RATE[k]||1.4));
+  for(let i=0;i<5;i++)for(let j=0;j<3;j++)cur[i][j]+=(tgc[i][j]-cur[i][j])*Math.min(1,dt*.8);
+  const c=k=>`rgb(${cur[k].map(Math.round)})`;
+  const sg=x.createLinearGradient(0,0,0,H*.85);sg.addColorStop(0,c(0));sg.addColorStop(1,c(1));x.fillStyle=sg;x.fillRect(0,0,W,H);
+  for(const s of stars){x.fillStyle=`rgba(255,244,220,${st.star*(.35+.65*Math.abs(Math.sin(t*s.s+s.p)))*s.d})`;x.beginPath();x.arc(s.x*W,s.y*H,s.r,0,TAU);x.fill()}
+  if(fwOn){fwT-=dt;if(fwT<=0){burst();fwT=RM?2.5:fwI*(.8+R()*.5)}}
+  for(let i=fw.length-1;i>=0;i--){const f=fw[i];f.l+=dt;if(f.l>1.5){fw.splice(i,1);continue}
+    f.vy+=70*dt;f.x+=f.vx*dt;f.y+=f.vy*dt;f.vx*=.985;x.globalAlpha=1-f.l/1.5;x.fillStyle=f.c;x.beginPath();x.arc(f.x,f.y,2,0,TAU);x.fill();x.globalAlpha=1}
+  for(let i=sh.length-1;i>=0;i--){const s=sh[i];s.l+=dt;s.x+=s.vx*dt;s.y+=s.vy*dt;if(s.l>1.9){sh.splice(i,1);continue}
+    const g=x.createLinearGradient(s.x,s.y,s.x-s.vx*.2,s.y-s.vy*.2);g.addColorStop(0,s.g?'rgba(243,213,138,.95)':'rgba(255,255,255,.95)');g.addColorStop(1,'rgba(255,255,255,0)');
+    x.globalAlpha=Math.min(1,(1.9-s.l)*2);x.strokeStyle=g;x.lineWidth=2.2;x.beginPath();x.moveTo(s.x,s.y);x.lineTo(s.x-s.vx*.2,s.y-s.vy*.2);x.stroke();x.globalAlpha=1}
+  if(st.lead>.02){const p=.5+.5*Math.sin(t*1.6),r=2+3*p,lx=W/2,ly=H*.24,g=x.createRadialGradient(lx,ly,0,lx,ly,r*9);g.addColorStop(0,`rgba(255,240,200,${st.lead*.5})`);g.addColorStop(1,'rgba(255,240,200,0)');
+    x.fillStyle=g;x.beginPath();x.arc(lx,ly,r*9,0,TAU);x.fill();x.fillStyle=`rgba(255,255,255,${st.lead})`;x.beginPath();x.arc(lx,ly,r,0,TAU);x.fill()}
+  const ry=(i,xx)=>{const s=[1.3,4.1,7.7][i]+Math.sin(t*.05+i)*.05;return H*[.62,.7,.78][i]-H*[.2,.16,.12][i]*(.55*Math.sin(xx*.0035*(1+i*.4)+s)+.3*Math.sin(xx*.011+s*2)+.15*Math.sin(xx*.027+s*3)+1)*.5};
+  for(let i=0;i<3;i++){x.fillStyle=c(2+i);x.beginPath();x.moveTo(0,H);for(let xx=0;xx<=W+10;xx+=10)x.lineTo(xx,ry(i,xx));x.lineTo(W,H);x.fill();
+    if(i==1){const my=H*.68+Math.sin(t*.1)*8,mg=x.createLinearGradient(0,my-45,0,my+45);mg.addColorStop(0,'rgba(190,210,255,0)');mg.addColorStop(.5,'rgba(190,210,255,.08)');mg.addColorStop(1,'rgba(190,210,255,0)');x.fillStyle=mg;x.fillRect(0,my-45,W,90)}}
+  x.fillStyle='rgba(2,4,10,.5)';for(let i=0;i<(mob?10:18);i++){const xx=((i*37)%100)/100*W,y=ry(2,xx),h=16+(i%4)*7;x.beginPath();x.moveTo(xx-h*.35,y+3);x.lineTo(xx,y-h);x.lineTo(xx+h*.35,y+3);x.fill()}
+  x.fillStyle='rgba(180,200,240,.05)';for(let k=0;k<3;k++){x.beginPath();x.ellipse(((t*8+k*320)%(W+500))-250,H*(.18+k*.08),150,16,0,0,TAU);x.fill()}
+  if(st.sil>.02){const s=Math.min(1,W/600)*.8+.4,rx=W*.72,ryy=H*.9;x.globalAlpha=st.sil;x.fillStyle='#070b16';x.beginPath();x.ellipse(rx,ryy,90*s,32*s,0,0,TAU);x.fill();
+    for(const [dx,k] of [[-24,1],[20,.85]]){x.beginPath();x.ellipse(rx+dx*s,ryy-34*s*k,12*s*k,19*s*k,0,0,TAU);x.fill();x.beginPath();x.arc(rx+dx*s,ryy-62*s*k,8*s*k,0,TAU);x.fill()}x.globalAlpha=1}
+  x.fillStyle='rgba(3,8,10,.55)';x.fillRect(0,H*.965,W,H);
+  const Z=mob?.85:1.2;
+  for(const f of FL){
+    let b=cl((st.flow*1.6-f.d)/.5);if(f.gold)b*=st.gold;if(b<=.01)continue;
+    const e=1-Math.pow(1-b,3),sw=Math.sin(t*(.8+f.ph*.3)+f.ph*5)*(f.near?9:5)*(1+st.wind),bx=f.x,by=H*.985-(f.near?0:H*.02),tx=bx+sw,ty=by-f.h*H*e;
+    x.strokeStyle='rgba(60,120,90,.9)';x.lineWidth=f.near?2.6:1.6;x.beginPath();x.moveTo(bx,by);x.quadraticCurveTo(bx+sw*.2,(by+ty)/2,tx,ty);x.stroke();
+    x.fillStyle='rgba(70,140,100,.85)';x.beginPath();x.ellipse(bx+sw*.12+(f.ph>.5?7:-7),(by+ty)/2,f.near?9:6,3,f.ph>.5?-.6:.6,0,TAU);x.fill();
+    if(b>.45){const k=(b-.45)/.55,r=(f.near?15:9)*Z*(1-Math.pow(1-k,3));
+      if(f.gold){const g=x.createRadialGradient(tx,ty,0,tx,ty,r*2.6);g.addColorStop(0,'rgba(243,213,138,.4)');g.addColorStop(1,'rgba(243,213,138,0)');x.fillStyle=g;x.beginPath();x.arc(tx,ty,r*2.6,0,TAU);x.fill()}
+      x.save();x.translate(tx,ty);x.fillStyle=f.c;for(let j=0;j<6;j++){x.rotate(TAU/6);x.beginPath();x.ellipse(0,-r*.65,r*.32,r*.62,0,0,TAU);x.fill()}
+      x.fillStyle='#f3d58a';x.beginPath();x.arc(0,0,r*.28,0,TAU);x.fill();x.restore()}}
+  if(st.ff>.02)for(const f of FF){const fx=(.5+.5*Math.sin(t*f.sx+f.a))*W,fy=H*f.y+Math.sin(t*f.sy*3+f.b)*20,a=st.ff*(.4+.6*Math.abs(Math.sin(t*.9+f.a))),g=x.createRadialGradient(fx,fy,0,fx,fy,9);g.addColorStop(0,`rgba(255,235,150,${a})`);g.addColorStop(1,'rgba(255,235,150,0)');x.fillStyle=g;x.beginPath();x.arc(fx,fy,9,0,TAU);x.fill()}
+  if(st.cake>.02){const s=Math.min(W,520)/520,cx=W/2,cy=H*.88;x.globalAlpha=st.cake;
+    const g=x.createRadialGradient(cx,cy-70*s,0,cx,cy-70*s,150*s);g.addColorStop(0,'rgba(255,200,110,.3)');g.addColorStop(1,'rgba(255,200,110,0)');x.fillStyle=g;x.fillRect(cx-160*s,cy-220*s,320*s,300*s);
+    x.fillStyle='#f6d6df';x.fillRect(cx-75*s,cy-34*s,150*s,34*s);x.fillStyle='#fff';x.fillRect(cx-50*s,cy-62*s,100*s,28*s);x.fillStyle='#e58aa5';x.fillRect(cx-75*s,cy-34*s,150*s,5*s);x.fillRect(cx-50*s,cy-62*s,100*s,4*s);
+    for(let i=-1;i<=1;i++){const px=cx+i*28*s;x.fillStyle='#f3d58a';x.fillRect(px-2.5*s,cy-82*s,5*s,20*s);
+      const fl=1+.25*Math.sin(t*9+i*2),gust=Math.max(0,Math.sin(t*.7))>.9?6*s:0;x.fillStyle='#ffb347';x.beginPath();x.ellipse(px+gust,cy-90*s,3.5*s,7*s*fl,gust?.4:0,0,TAU);x.fill()}x.globalAlpha=1}
+  if(st.lant>.05){lT-=dt;if(lT<=0){spawn('l');lT=1.4/st.lant}}
+  if(st.bal>.05){bT-=dt;if(bT<=0){spawn('b');bT=1.8/st.bal}}
+  for(let i=rs.length-1;i>=0;i--){const o=rs[i];o.y-=o.vy*dt;if(o.y<-80){rs.splice(i,1);continue}const ox=o.x+Math.sin(t*.7+o.p)*14;
+    if(o.k=='l'){const g=x.createRadialGradient(ox,o.y,0,ox,o.y,o.s*3.2);g.addColorStop(0,'rgba(255,190,100,.5)');g.addColorStop(1,'rgba(255,190,100,0)');x.fillStyle=g;x.beginPath();x.arc(ox,o.y,o.s*3.2,0,TAU);x.fill();x.fillStyle='rgba(255,205,125,.95)';x.fillRect(ox-o.s/2,o.y-o.s*.65,o.s,o.s*1.3)}
+    else{x.strokeStyle='rgba(220,230,245,.6)';x.lineWidth=1;x.beginPath();x.moveTo(ox,o.y+o.s);x.quadraticCurveTo(ox+Math.sin(t*2+o.p)*6,o.y+o.s*2.4,ox,o.y+o.s*3.4);x.stroke();x.fillStyle=o.c;x.globalAlpha=.92;x.beginPath();x.ellipse(ox,o.y,o.s*.8,o.s,0,0,TAU);x.fill();x.globalAlpha=1;x.fillStyle='rgba(255,255,255,.45)';x.beginPath();x.ellipse(ox-o.s*.3,o.y-o.s*.4,o.s*.15,o.s*.3,-.5,0,TAU);x.fill()}}
+  if(st.petal>.02)for(const p of pet){
+    p.y+=p.vy*dt;p.x+=(p.vx+Math.sin(t*.8+p.p)*22+st.wind*30)*dt;p.r+=p.vr*dt;if(p.y>H+20||p.x>W+30)Object.assign(p,np(false));
+    x.save();x.translate(p.x,p.y);x.rotate(p.r);x.globalAlpha=st.petal*p.d;x.fillStyle=p.c;x.beginPath();x.ellipse(0,0,p.s,p.s*.55,0,0,TAU);x.fill();x.restore()}
+  if(st.g>.02){gt+=dt;const k=1-Math.pow(1-Math.min(gt/3,1),3),r=Math.max(1.6,Math.min(W*.8,460)/200*1.3);x.fillStyle=`rgba(243,213,138,${st.g})`;
+    for(const p of gp){x.beginPath();x.arc(p.x+(p.tx-p.x)*k+Math.sin(t*2+p.p)*(1.5-k),p.y+(p.ty-p.y)*k+Math.cos(t*2+p.p)*(1.5-k),r,0,TAU);x.fill()}}
+  if(st.solo>.02){x.save();x.translate(W/2+Math.sin(t*.5)*14,H*.46+Math.sin(t*.7)*10);x.rotate(t*.35);x.globalAlpha=st.solo;x.fillStyle='#fff';x.shadowColor='#fff';x.shadowBlur=14;x.beginPath();x.ellipse(0,0,13,7,0,0,TAU);x.fill();x.restore()}
+  requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+
+const d=ms=>new Promise(r=>setTimeout(r,ms));let skip=null;
+const wait=ms=>new Promise(r=>{const t=setTimeout(()=>{skip=null;r()},ms);skip=()=>{clearTimeout(t);skip=null;r()}});
+const tap=()=>new Promise(r=>{hint.classList.add('on');skip=()=>{hint.classList.remove('on');skip=null;r()}});
+addEventListener('pointerdown',()=>skip&&skip());
+addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter')skip&&skip()});
+const rt=s=>1600+s.replace(/<[^>]+>/g,'').length*42;
+function say(h,c='',p=txt){const e=document.createElement('p');e.className='t '+c;e.innerHTML=h;p.appendChild(e);e.offsetWidth;e.classList.add('in');return e}
+async function line(h,c,ms){say(h,c);await wait(ms||rt(h))}
+function title(s,c){const e=document.createElement('h1');e.className='t ttl '+c;let i=0;
+  s.split(' ').forEach(w=>{const wd=document.createElement('span');wd.className='w';[...w].forEach(ch=>{const l=document.createElement('span');l.className='L';l.textContent=ch;l.style.transitionDelay=(i++*80)+'ms';wd.appendChild(l)});e.appendChild(wd);e.appendChild(document.createTextNode(' '))});
+  txt.appendChild(e);e.offsetWidth;e.classList.add('in');return e}
+async function clr(){const a=[...txt.children];a.forEach(e=>e.classList.remove('in'));await d(1300);a.forEach(e=>e.remove())}
+function heart(){hv.innerHTML='<svg class="heart" viewBox="0 0 100 92"><path pathLength="1" d="M50 86C22 63 5 46 7 29C9 14 24 6 36 10C43 12 48 17 50 22C53 15 60 8 71 7C85 6 95 18 93 31C91 48 74 63 50 86Z"/></svg>';
+  const h=hv.firstChild;h.getBoundingClientRect();h.classList.add('in');return h}
+const pad=c=>{const e=document.createElement('div');e.className=c+' t';txt.appendChild(e);e.offsetWidth;e.classList.add('in');return e};
+
+const COND=['Prezado Anderson,','Venho, por meio desta, apresentar minhas mais sinceras condolências pelo seu falecimento futuro.','Foi uma honra conhecer você enquanto ainda se encontrava entre os vivos.','Neste momento tão delicado, gostaria de reconhecer seus serviços prestados à humanidade durante seus primeiros 18 anos de existência.','Sua presença será lembrada, suas conversas serão arquivadas e suas decisões questionáveis continuarão sendo investigadas por tempo indeterminado.','Espero que tenha aproveitado seu aniversário, porque o tempo continua passando e, infelizmente, ainda não inventaram uma maneira de cancelar o envelhecimento.','Ressalto que esta nota não representa uma previsão, ameaça ou qualquer informação médica. Trata-se apenas de uma demonstração de amizade e de um senso de humor que claramente precisava ser supervisionado.','Receba meus sentimentos antecipados e meus votos de muitos anos de vida, porque, apesar de toda essa palhaçada, a intenção é que você fique por aqui durante muito tempo.','Atenciosamente,<br>Seu amigo, que não encontrou uma maneira normal de desejar feliz aniversário.'];
+const LET=['Anderson,<br><br>Hoje é seu aniversário, e eu queria te entregar alguma coisa diferente.','A gente se conheceu no Free Fire, de um jeito que talvez nenhum dos dois imaginasse que acabaria levando a uma amizade. É curioso pensar que uma coisa tão simples pode colocar alguém no caminho da gente.','Eu não sei como serão os próximos anos. Não sei quantas coisas vão mudar, quantas histórias ainda vamos viver ou onde cada um de nós vai estar no futuro.<br><br>Mas espero que a vida te dê muitos motivos para sorrir.','Espero que você encontre pessoas que te façam bem, que consiga realizar aquilo que realmente deseja e que tenha coragem para continuar tentando quando alguma coisa não sair como esperava.','Fazer 18 anos não significa que você precisa saber tudo sobre a vida. Ninguém recebe um manual de instruções quando chega nessa fase, por mais que algumas pessoas gostem de fingir que receberam.','Você ainda tem muita coisa pela frente. Espero que possa aproveitar as oportunidades que aparecerem, aprender com o que der errado e guardar com carinho as coisas boas que acontecerem pelo caminho.<br><br>Também espero que a nossa amizade continue existindo no meio de todas essas mudanças.','Talvez, daqui a muitos anos, a gente olhe para trás e ache engraçado pensar que tudo começou em um jogo. Talvez existam histórias que hoje nem conseguimos imaginar.<br><br>Seja como for, fico feliz por ter conhecido você.','E, mesmo que eu tenha escolhido uma maneira completamente desnecessária de falar sobre a mortalidade humana nesta homenagem, quero que você entenda uma coisa: desejo que você viva muito, que seja feliz e que tenha muitas oportunidades de construir uma vida da qual se orgulhe.','Obrigado pela amizade, Anderson.<br><br>Feliz aniversário. Espero que este dia seja apenas o começo de muitas coisas boas.','E não se acostume com essa quantidade de sentimentalismo. Foi uma ocasião especial. Não pretendo transformar isso em hábito.<br><br>Com carinho,<br>Seu amigo.'];
+const SEC=['Se você chegou até aqui, então viu tudo o que preparei.<br><br>Queria que esta homenagem fosse uma lembrança de que a nossa amizade importa para mim.','Talvez eu não seja a pessoa mais habilidosa para demonstrar essas coisas de maneira normal. Por isso, aparentemente, precisei criar um site inteiro, colocar flores, desenhar corações e escrever uma carta de condolências para conseguir desejar feliz aniversário.','Mas, brincadeiras à parte, obrigado por fazer parte da minha vida.<br><br>Espero que você seja feliz, que tenha muitas oportunidades de realizar seus sonhos e que nunca faltem motivos para continuar acreditando nas coisas boas que ainda podem acontecer.','Feliz aniversário, Anderson.<br><br>Que venham muitas outras histórias.'];
+const ZOA=['Comunicado extremamente importante.','Anderson está fazendo aniversário. Solicitamos que todos mantenham a calma durante este acontecimento histórico.','Não há motivo para desespero. Ele continua sendo a mesma pessoa. Só está ficando mais velho.','Esperamos que o aniversariante continue vivo, saudável e suficientemente lúcido para tomar boas decisões. As decisões ruins, por outro lado, continuarão sendo assunto para futuras piadas.'];
+
+async function main(){
+  // 1. Abertura: o jardim desperta
+  pal('dark');await wait(2500);tg.lead=1;await wait(3500);pal('night');tg.star=1;await wait(1500);
+  shoot(true);tg.ff=1;await wait(1300);tg.flow=1.3;await wait(3500);tg.lead=.4;
+  title('ANDERSON','big');await wait(3000);
+  await line('Hoje, este pequeno universo celebra você.','sub',3200);
+  tg.petal=.9;await line('Preparei uma pequena viagem para comemorar seu aniversário. Tem algumas besteiras, algumas flores e coisas que eu realmente queria te dizer.');
+  pal('warm');tg.lead=0;await wait(1200);await clr();
+  // 2. Feliz aniversário
+  txt.classList.add('low');tg.lant=1;tg.bal=1;tg.petal=1;tg.cake=1;await wait(3000);
+  g18();await wait(4500);title('Feliz aniversário, Anderson!','mid');await wait(2800);
+  await line('Hoje é o seu dia. Então aproveita, porque envelhecer é inevitável, mas passar vergonha é uma escolha que você parece disposto a continuar fazendo.');
+  fwOn=true;fwI=2.2;await line('Brincadeiras à parte, espero que seu novo ano seja cheio de coisas boas, boas risadas e pessoas que façam a vida valer a pena.');
+  await wait(2500);tg.bal=0;tg.lant=.3;tg.cake=0;tg.g=0;shoot(true);fwOn=false;await clr();txt.classList.remove('low');
+  // 3. A amizade
+  pal('dusk');tg.star=.15;tg.lant=0;tg.petal=.2;tg.sil=1;tg.flow=.6;await wait(2500);
+  await line('Engraçado como algumas amizades começam por acaso.');await clr();
+  await line('No nosso caso, tudo começou em um jogo.');await wait(900);await clr();
+  await line('Uma partida, algumas conversas e, quando a gente percebe, alguém que antes era só mais uma pessoa do outro lado da tela já faz parte da nossa vida.');await clr();
+  tg.flow=1.3;await line('Não preciso inventar uma história extraordinária para achar isso especial. Às vezes, o jeito como uma amizade começa já é interessante o suficiente.','sub');
+  tg.petal=.7;await wait(1500);await clr();
+  // 4. Zoar o aniversariante
+  pal('night');tg.star=1;tg.sil=0;tg.petal=.3;
+  let pp=pad('paper');const cw=document.createElement('div');cw.className='crown';cw.innerHTML='<svg viewBox="0 0 80 60"><path d="M6 52 10 16 28 34 40 8 52 34 70 16 74 52Z" fill="#d9a93b" stroke="#8a6a1f" stroke-width="2"/></svg>';pp.appendChild(cw);
+  for(let i=0;i<ZOA.length;i++){say(ZOA[i],'',pp);if(i==2)cw.classList.add('fall');await wait(rt(ZOA[i]))}
+  await tap();await clr();
+  // 5. Condolências
+  pal('candle');tg.star=0;tg.flow=.3;tg.ff=0;tg.petal=0;
+  const cg=document.createElement('div');cg.className='candle';document.body.appendChild(cg);
+  pp=pad('paper');const h2=document.createElement('h2');pp.appendChild(h2);
+  for(const ch of 'NOTA DE CONDOLÊNCIAS ANTECIPADAS'){h2.textContent+=ch;await d(45)}
+  for(const p of COND){say(p,'',pp);pp.scrollTo({top:pp.scrollHeight,behavior:'smooth'});await wait(rt(p))}
+  say('♥','ink',pp);pp.scrollTo({top:pp.scrollHeight,behavior:'smooth'});await wait(2200);
+  cg.style.opacity=0;await wait(2200);await clr();cg.remove();tg.solo=1;
+  // 6. O jardim fica em silêncio
+  pal('dark');await wait(3500);
+  const hh=heart();await wait(4000);hh.classList.add('pulse');await wait(2400);
+  await line('Agora, falando sério.','sub',3500);
+  await line('Por trás de todas as brincadeiras, existe uma coisa que eu realmente queria te dizer.','sub');
+  tg.flow=.5;tg.ff=.6;await clr();await line('Eu fico feliz por ter você como meu amigo.','sub',4500);
+  await clr();hv.innerHTML='';tg.solo=0;
+  // 7. A carta
+  tg.star=.4;const cd=pad('card');
+  for(const g of LET){say(g,'',cd);cd.scrollTo({top:cd.scrollHeight,behavior:'smooth'});await tap()}
+  shoot(true);await d(500);shoot(true);await clr();
+  // 8. Grande final
+  pal('night');tg.star=1;shoot(true);await wait(2000);tg.flow=1.4;await wait(3000);
+  tg.gold=1;tg.petal=1;tg.bal=1;tg.lant=1;tg.wind=1;tg.ff=1;await wait(2800);shoot(true);await wait(1500);
+  txt.classList.add('low');g18();await wait(4500);fwOn=true;fwI=.8;
+  title('FELIZ ANIVERSÁRIO, ANDERSON!','mid');await wait(3200);
+  await line('Que nunca te faltem motivos para sorrir, pessoas boas para compartilhar a vida e sonhos que façam você querer continuar caminhando.');
+  await line('Que você tenha saúde, felicidade, coragem para enfrentar os dias difíceis e tempo para aproveitar os dias bons.');
+  await wait(4000);fwI=2.6;tg.petal=.3;tg.bal=0;await wait(4000);fwOn=false;tg.lant=.3;tg.wind=.2;tg.g=.4;
+  await clr();say('Feliz aniversário, meu amigo.<br>Que a vida ainda nos reserve muitas histórias para contar.','sub');
+  // 9. Última surpresa
+  const sb=$('#secret');sb.classList.add('on');await new Promise(r=>sb.addEventListener('click',r,{once:true}));
+  sb.classList.add('go');await clr();txt.classList.remove('low');tg.g=0;tg.petal=0;tg.bal=0;tg.lant=0;tg.ff=.4;tg.star=.6;shoot(true);
+  const h9=heart();await wait(4200);
+  for(let i=0;i<SEC.length;i++){await line(SEC[i],'',rt(SEC[i])+800);await clr()}
+  h9.classList.add('pulse');await wait(2600);h9.classList.add('star');await wait(900);h9.classList.add('rise');await wait(4500);
+  title('ANDERSON','mid');
+}
+main();
+})();
+</script>
+</body>
+</html>
