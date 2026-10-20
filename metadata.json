@@ -1,8 +1,0 @@
-{
-  "name": "Anderson, o Resende — 18 anos",
-  "description": "Uma homenagem interativa e emocionante celebrando os 18 anos de Anderson (Resende) e quase sete anos de amizade verdadeira.",
-  "permissions": [],
-  "capabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
-}
