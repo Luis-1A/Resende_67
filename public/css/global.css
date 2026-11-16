@@ -1,0 +1,27 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b, #card, #card p, button {
+    transition-duration: .4s;
+  }
+  .name {
+    animation: none;
+  }
+}

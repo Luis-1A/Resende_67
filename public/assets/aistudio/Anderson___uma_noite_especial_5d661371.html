@@ -1,0 +1,219 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anderson — uma noite especial</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07112A;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{margin:0;height:100%;background:var(--bg);overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:manipulation;font-family:'Cormorant Garamond',Georgia,serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.b{position:fixed;left:0;right:0;text-align:center;padding:0 10vw;box-sizing:border-box;font-size:clamp(19px,4.6vw,30px);color:#fff;opacity:0;transform:translateY(12px);transition:opacity 1.6s,transform 1.6s;text-shadow:0 0 18px rgba(0,0,0,.6);line-height:1.4;pointer-events:none}
+.b.on{opacity:1;transform:none}
+.top{top:9%}.mid{top:22%}.low{top:37%}.bot{top:50%}.b3{top:62%}
+.tl{top:8%;text-align:left;padding:0 8vw;font-size:clamp(16px,3.6vw,24px)}
+.name{font-size:clamp(38px,12vw,80px);letter-spacing:.14em;font-weight:600;background:linear-gradient(90deg,#fff,#f2d98c,#fff,#f2d98c);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;animation:sh 5s linear infinite}
+@keyframes sh{to{background-position:300% 0}}
+.big{font-size:clamp(26px,7.5vw,56px);font-weight:600;letter-spacing:.04em}
+.fun{font-style:italic;color:#FFE9A8}
+#card{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(86vw,560px);max-height:68vh;overflow-y:auto;box-sizing:border-box;padding:4vh 6vw;background:#F4E8CF;color:#3B2A1A;border-radius:6px;box-shadow:0 0 50px rgba(0,0,0,.45);font-size:clamp(16px,2.4vw,21px);line-height:1.55;opacity:0;transition:opacity 2s;pointer-events:none;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain}
+#card.on{opacity:1;pointer-events:auto}
+#card.dk{background:transparent;color:#fff;box-shadow:none;text-shadow:0 0 14px rgba(0,0,0,.8);text-align:center}
+#card h3{margin:0 0 1em;text-align:center;font-size:1.05em;letter-spacing:.12em}#card p{margin:0 0 1em}
+button{position:fixed;font-family:inherit;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:8px 22px;font-size:clamp(14px,3vw,18px);letter-spacing:.14em;opacity:0;pointer-events:none;transition:opacity 1.5s}
+button.on{opacity:.85;pointer-events:auto}
+#nx{left:50%;transform:translateX(-50%);bottom:calc(5vh + env(safe-area-inset-bottom,0px))}
+#mu{top:calc(12px + env(safe-area-inset-top,0px));right:12px;padding:4px 12px;opacity:.45;pointer-events:auto}
+#st{position:fixed;left:0;right:0;top:55%;text-align:center;color:#fff;font-size:clamp(16px,3.2vw,22px);letter-spacing:.3em;animation:p 3s ease-in-out infinite;text-shadow:0 0 18px rgba(150,200,255,.7)}
+@keyframes p{50%{opacity:.3}}
+#nt{position:fixed;left:0;right:0;bottom:3vh;text-align:center;color:#fff;font-size:13px;opacity:0;transition:opacity 2s;padding:0 8vw}
+</style></head><body>
+<canvas id="c"></canvas><div id="tx"></div><div id="card"></div>
+<div id="st">toque para começar</div><div id="nt"></div>
+<button id="nx">continuar ›</button><button id="mu" style="display:none">♪</button>
+<script>
+const $=i=>document.getElementById(i),cv=$('c'),x=cv.getContext('2d'),mob=matchMedia('(pointer:coarse)').matches,RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cl=(v,a=0,b=1)=>Math.min(b,Math.max(a,v)),L=(a,b,k)=>a+(b-a)*k,ez=k=>k*k*(3-2*k),rnd=Math.random;
+const LT5=`Prezado Anderson,
+
+Venho, por meio desta, apresentar minhas mais sinceras condolências pelo seu falecimento futuro.
+
+Foi uma honra conhecer você enquanto ainda se encontrava entre os vivos.
+
+Neste momento tão delicado, gostaria de reconhecer seus serviços prestados à humanidade durante seus primeiros 18 anos de existência.
+
+Sua presença será lembrada, suas conversas serão arquivadas e suas decisões questionáveis continuarão sendo investigadas por tempo indeterminado.
+
+Espero que tenha aproveitado seu aniversário, porque o tempo continua passando e, infelizmente, ainda não inventaram uma maneira de cancelar o envelhecimento.
+
+Ressalto que esta nota não representa uma previsão. Trata-se apenas de uma demonstração de amizade e de um senso de humor que claramente precisava ser supervisionado.
+
+Receba meus sentimentos antecipados e meus votos de muitos anos de vida.
+
+Atenciosamente,
+
+Seu amigo, que não encontrou uma maneira normal de desejar feliz aniversário.`;
+const LT7=`Anderson,
+
+Hoje é seu aniversário, e eu queria te entregar alguma coisa diferente.
+
+A gente se conheceu no Free Fire, de um jeito que talvez nenhum dos dois imaginasse que acabaria levando a uma amizade. É curioso pensar que uma coisa tão simples pode colocar alguém no caminho da gente.
+
+Eu não sei como serão os próximos anos. Não sei quantas coisas vão mudar, quantas histórias ainda vamos viver ou onde cada um de nós vai estar no futuro.
+
+Mas espero que a vida te dê muitos motivos para sorrir.
+
+Espero que você encontre pessoas que te façam bem, que consiga realizar aquilo que realmente deseja e que tenha coragem para continuar tentando quando alguma coisa não sair como esperava.
+
+Fazer 18 anos não significa que você precisa saber tudo sobre a vida. Ninguém recebe um manual de instruções quando chega nessa fase.
+
+Você ainda tem muita coisa pela frente. Espero que possa aproveitar as oportunidades que aparecerem, aprender com o que der errado e guardar com carinho as coisas boas que acontecerem pelo caminho.
+
+Também espero que a nossa amizade continue existindo no meio de todas essas mudanças.
+
+Talvez, daqui a muitos anos, a gente olhe para trás e ache engraçado pensar que tudo começou em um jogo. Talvez existam histórias que hoje nem conseguimos imaginar.
+
+Seja como for, fico feliz por ter conhecido você.
+
+E, mesmo que eu tenha escolhido uma maneira completamente desnecessária de falar sobre a mortalidade humana nesta homenagem, quero que você entenda uma coisa: desejo que você viva muito, que seja feliz e que tenha muitas oportunidades de construir uma vida da qual se orgulhe.
+
+Obrigado pela amizade, Anderson.
+
+Feliz aniversário. Espero que este dia seja apenas o começo de muitas coisas boas.
+
+E não se acostume com essa quantidade de sentimentalismo. Foi uma ocasião especial. Não pretendo transformar isso em hábito.
+
+Com carinho,
+
+Seu amigo.`;
+const LT9=`Se você chegou até aqui, então viu tudo o que preparei.
+
+Queria que esta homenagem fosse uma lembrança de que a nossa amizade importa para mim.
+
+Talvez eu não seja a pessoa mais habilidosa para demonstrar essas coisas de maneira normal. Por isso, aparentemente, precisei criar um site inteiro, colocar flores, desenhar corações e escrever uma carta de condolências para conseguir desejar feliz aniversário.
+
+Mas, brincadeiras à parte, obrigado por fazer parte da minha vida.
+
+Espero que você seja feliz, que tenha muitas oportunidades de realizar seus sonhos e que nunca faltem motivos para continuar acreditando nas coisas boas que ainda podem acontecer.
+
+Feliz aniversário, Anderson.
+
+Que venham muitas outras histórias.`;
+// cenas: p=[topo,base,estrelas], m=montanhas, f=paleta das flores
+const COLF=['#FF9EC4','#FFD36E','#9ED1FF','#C8A6FF'];
+const S=[
+{p:['#07112A','#25406E',1],m:['#14264A','#0E1B38'],f:['#E8F1FF','#BFD4FF','#F7C6E0'],tx:[['Existe uma noite especial que merece ser lembrada.','mid'],['E hoje, ela foi preparada para você.','low'],['ANDERSON','mid name'],['Hoje, este pequeno universo celebra você.','low'],['22 de novembro.','bot']]},
+{p:['#101C45','#4A5E9A',.8],m:['#1B2D5E','#142350'],f:COLF,tx:[['Hoje o dia é todinho seu.','top'],['Feliz aniversário, Anderson!','mid big'],['Dezoito anos de vida, novas histórias pela frente e muitas oportunidades para fazer coisas incríveis.','low'],['E, por favor, tente não fazer muita besteira. Pelo menos hoje.','bot fun']]},
+{p:['#4C5C9C','#F7B267',0],m:['#7A5C8A','#4A3A63'],f:['#FFD9A0','#FFB4A2'],tx:[['Engraçado como algumas amizades começam por acaso.','tl'],['No nosso caso, tudo começou em um jogo.','mid'],['Uma partida, algumas conversas e, quando a gente percebe, alguém que antes estava do outro lado da tela já faz parte da nossa vida.','low'],['E pensar que tudo começou no Free Fire.','bot']]},
+{p:['#2A2A4A','#55597D',.5],m:['#3B3B66','#2C2C52'],f:['#D9C7A0','#F0E2B8'],tx:[['Um comunicado extremamente importante.','top'],['Foi oficialmente confirmado que Anderson está fazendo aniversário.','mid'],['Pedimos que todos mantenham a calma. Ele continua sendo a mesma pessoa, apenas com mais experiência em existir.','low'],['Desejamos muitos anos de vida, boas histórias e decisões um pouco menos questionáveis.','bot']]},
+{p:['#0D0A12','#2A1C22',0],f:['#8A7A5A'],tx:[],card:LT5,h:'NOTA DE CONDOLÊNCIAS ANTECIPADAS'},
+{p:['#02030A','#02030A',0],f:['#FFFFFF'],tx:[['Agora, falando sério.','low'],['Por trás de todas as brincadeiras, existe uma coisa que eu realmente queria te dizer.','bot'],['Eu fico feliz por ter você como meu amigo.','b3']]},
+{p:['#F6E7C8','#E8CFA0',0],f:['#FFFFFF','#F7C6E0'],tx:[],card:LT7},
+{p:['#0A1640','#3E5CA8',1],m:['#1B2D5E','#142350'],f:COLF,tx:[['Que a vida te surpreenda com coisas bonitas.','top'],['Que nunca te faltem motivos para sorrir, pessoas boas para compartilhar a vida e sonhos que façam você querer continuar caminhando.','mid'],['Que você tenha saúde, felicidade, coragem para enfrentar os dias difíceis e tempo para aproveitar os dias bons.','low'],['FELIZ ANIVERSÁRIO, ANDERSON!','mid big'],['Que a vida ainda nos reserve muitas histórias para contar.','low']]},
+{p:['#030510','#0B1230',1],m:['#0D1838','#091127'],f:['#FFFFFF'],tx:[],card:LT9,dk:1}];
+let W,H,cx,u,DPR,FL=[],PT=[],ST=[],MT=[],NP=[],FW=[],CF=[],R=0,last=0,t0=0,sc=-1,tm=[],endT=0,go=false,trans=null,shown=-1,stg=0,t1=0,fin=false,ready=false;
+const hp=t=>[16*Math.pow(Math.sin(t),3),-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))];
+const G=(()=>{const o=document.createElement('canvas');o.width=o.height=64;const c=o.getContext('2d'),g=c.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,248,225,1)');g.addColorStop(.25,'rgba(255,230,170,.5)');g.addColorStop(1,'rgba(255,230,170,0)');c.fillStyle=g;c.fillRect(0,0,64,64);return o})();
+function rs(){DPR=Math.min(devicePixelRatio||1,mob?1:1.5);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;x.setTransform(DPR,0,0,DPR,0,0);cx=W/2;u=cl(Math.min(W,H)/500,.8,2);
+const nf=RM?10:mob?18:28;FL=[];for(let i=0;i<nf;i++)FL.push({x:(i+rnd()*.8)/nf,y:rnd(),h:rnd(),p:rnd()*6,c:i,d:rnd()});
+PT=[];for(let i=0;i<(RM?6:16);i++)PT.push({x:rnd(),y:rnd(),s:.5+rnd(),p:rnd()*6});
+ST=[];for(let i=0;i<70;i++)ST.push([rnd(),rnd()*.7,.8+rnd()*1.5,rnd()*6]);
+MT=[];for(let i=0;i<(RM?8:30);i++)MT.push({x:rnd(),y:rnd(),r:2+rnd()*3,p:rnd()*6});
+const o=document.createElement('canvas');o.width=340;o.height=220;const c=o.getContext('2d');c.fillStyle='#fff';c.font='bold 200px Arial,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('18',170,118);
+const d=c.getImageData(0,0,340,220).data,q=[];for(let j=0;j<220;j+=5)for(let i=0;i<340;i+=5)if(d[(j*340+i)*4+3]>128)q.push([(i-170)/100,(j-110)/100]);
+NP=q.map(a=>({a,sx:rnd()*2-1,sy:rnd()*2-1,d:rnd()*.4,p:rnd()*6}))}
+addEventListener('resize',rs);
+// wake lock
+let wl=null,running=false;
+async function reqWL(){if(!('wakeLock' in navigator)||document.visibilityState!=='visible')return false;try{if(wl&&!wl.released)return true;wl=await navigator.wakeLock.request('screen');wl.addEventListener('release',()=>{wl=null});return true}catch(e){wl=null;return false}}
+async function relWL(){running=false;try{if(wl){await wl.release();wl=null}}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&running)reqWL()});
+// áudio
+let AC,mg,pg,po=[],muted=false,nb=0;const CH=[[110,164.8,220,261.6],[130.8,196,261.6,329.6],[98,146.8,196,293.7],[110,164.8,220,261.6],[87.3,130.8,174.6,220],[110,164.8,220,246.9],[130.8,196,261.6,329.6],[146.8,220,293.7,370],[98,146.8,196,246.9]],PE=[523.3,587.3,659.3,784,880,1046.5];
+function aud(){try{AC=new(window.AudioContext||window.webkitAudioContext)();AC.resume();mg=AC.createGain();mg.gain.value=0;mg.connect(AC.destination);mg.gain.linearRampToValueAtTime(.55,AC.currentTime+4);pg=AC.createGain();pg.gain.value=.12;pg.connect(mg);po=CH[0].map(f=>{const o=AC.createOscillator(),g=AC.createGain();o.type='triangle';o.frequency.value=f;g.gain.value=.25;o.connect(g);g.connect(pg);o.start();return o})}catch(e){AC=0}}
+function tone(f,d,v){if(!AC)return;const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(mg);o.start(t);o.stop(t+d+.05)}
+function chord(n){if(AC)po.forEach((o,i)=>o.frequency.setTargetAtTime(CH[n][i],AC.currentTime,1.5))}
+$('mu').onclick=e=>{e.stopPropagation();muted=!muted;if(AC)mg.gain.setTargetAtTime(muted?0:.55,AC.currentTime,.2);$('mu').style.opacity=muted?.2:.45};
+// cenas
+function load(n){sc=n;t0=R;shown=-1;stg=0;fin=false;ready=false;try{sessionStorage.setItem('a18',n)}catch(e){}chord(n);const s=S[n],tx=$('tx');tx.innerHTML='';
+s.tx.forEach(a=>{const d=document.createElement('div');d.className='b '+a[1];d.textContent=a[0];tx.appendChild(d)});
+let acc=n==0?15:1.8;tm=s.tx.map(a=>{const t=acc;acc+=Math.max(3.4,1.8+a[0].length*.05);return t});endT=acc+3;
+const cd=$('card');cd.className=s.dk?'dk':'';cd.scrollTop=0;if(s.card){cd.innerHTML=(s.h?'<h3>'+s.h+'</h3>':'')+s.card.split('\n\n').map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');}
+$('nx').classList.remove('on');FW=[];CF=[]}
+const TC=['7,12,30','255,214,140','243,232,200','250,246,235','0,0,0','244,232,207','242,217,140','7,12,30','7,12,30'];
+function next(){if(trans||sc>=8)return;trans={t:0,sw:0,to:sc+1,c:TC[sc]};$('tx').innerHTML='';$('card').classList.remove('on');$('nx').classList.remove('on')}
+$('nx').onclick=e=>{e.stopPropagation();if(sc==8&&stg==3)finish();else if(sc==8&&stg==2){stg=3;t1=R;$('card').classList.remove('on');$('nx').classList.remove('on')}else next()};
+function finish(){fin=true;relWL();const d=document.createElement('div');d.className='b mid name on';d.textContent='ANDERSON';d.style.fontSize='clamp(22px,6vw,40px)';d.style.opacity=.7;$('tx').appendChild(d)}
+addEventListener('pointerdown',e=>{if(!go){go=true;running=true;aud();reqWL().then(ok=>{if(!ok){const n=$('nt');n.textContent='Para aproveitar a homenagem inteira sem interrupções, recomendamos manter o navegador aberto.';n.style.opacity=.7;setTimeout(()=>n.style.opacity=0,7000)}});$('st').style.display='none';$('mu').style.display='block';let n=0;try{n=+sessionStorage.getItem('a18')||0}catch(e){}load(Math.min(n,8));return}
+if(sc==8&&stg==0&&Math.hypot(e.clientX-cx,e.clientY-H*.35)<60*u){stg=1;t1=R;tone(1047,2,.1)}});
+// desenho
+function sky(s){const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,s.p[0]);g.addColorStop(1,s.p[1]);x.fillStyle=g;x.fillRect(0,0,W,H);
+if(s.p[2]){x.fillStyle='#fff';ST.forEach(a=>{x.globalAlpha=s.p[2]*(.4+.5*Math.sin(R*2+a[3]));x.fillRect(a[0]*W,a[1]*H,a[2]*u,a[2]*u)});x.globalAlpha=1}}
+function mount(c,b,a,sd){x.fillStyle=c;x.beginPath();x.moveTo(0,H);for(let i=0;i<=W+20;i+=20)x.lineTo(i,H*b-H*a*(Math.sin(i*.004+sd)+.5*Math.sin(i*.011+sd*2)+1.5)/3);x.lineTo(W,H);x.fill()}
+function flower(f,s,st,d0){const b=cl((st-d0-f.d*(d0?12:3))/2.5),fx=f.x*W,by=H*(.9+f.y*.1),h=H*(.05+f.h*.1)*Math.max(b,.15);x.strokeStyle='#2E6B4A';x.lineWidth=2*u;x.beginPath();x.moveTo(fx,by);x.quadraticCurveTo(fx+Math.sin(R+f.p)*5,by-h/2,fx,by-h);x.stroke();
+if(b>.3){const r=(8+f.h*9)*u*cl((b-.3)/.7);x.fillStyle=s.f[f.c%s.f.length];for(let i=0;i<6;i++){const a=i*1.047+f.p;x.beginPath();x.ellipse(fx+Math.cos(a)*r*.6,by-h+Math.sin(a)*r*.6,r*.55,r*.3,a,0,6.283);x.fill()}x.fillStyle='#FFE08A';x.beginPath();x.arc(fx,by-h,r*.3,0,6.283);x.fill()}}
+function flower(f,s,st,d0){const dl=sc==7?f.x*8:sc==0?9+f.d*12:f.d*3,g=ez(cl((st-dl)/2)),b=cl((st-dl-1.6)/2.6),fx=f.x*W,by=H*(.9+f.y*.1),h=H*(.05+f.h*.1)*Math.max(g,.1),sw=Math.sin(R*.8+f.p)*(3+b*4)*u;
+x.strokeStyle='#2E6B4A';x.lineWidth=2*u;x.beginPath();x.moveTo(fx,by);x.quadraticCurveTo(fx+sw*.5,by-h/2,fx+sw,by-h);x.stroke();
+if(g>.5){x.fillStyle='#3E8A5E';x.beginPath();x.ellipse(fx+sw*.4-5*u*g,by-h*.4,6*u*g,2.5*u*g,-.6,0,6.283);x.ellipse(fx+sw*.4+5*u*g,by-h*.55,6*u*g,2.5*u*g,.6,0,6.283);x.fill()}
+const r=(8+f.h*9)*u;if(g>.9&&b<=0){x.fillStyle='#4C9A6C';x.beginPath();x.ellipse(fx+sw,by-h,r*.25,r*.4,0,0,6.283);x.fill()}
+if(b>0){x.fillStyle=s.f[f.c%s.f.length];for(let i=0;i<6;i++){const a=i*1.047+f.p;x.beginPath();x.ellipse(fx+sw+Math.cos(a)*r*.6*b,by-h+Math.sin(a)*r*.6*b,r*.55*b,r*.3*b,a,0,6.283);x.fill()}x.fillStyle='#FFE08A';x.beginPath();x.arc(fx+sw,by-h,r*.3,0,6.283);x.fill()}
+if(sc==7&&b>0&&b<1){x.globalCompositeOperation='lighter';glow(fx+sw,by-h,r*3,.5*(1-b));x.globalCompositeOperation='source-over';x.globalAlpha=1}}
+function night0(st){x.globalAlpha=1-ez(cl((st-1.5)/3.5));x.fillStyle='#02040A';x.fillRect(0,0,W,H);x.globalAlpha=1;
+const k=cl((st-5.2)/3.8),gr=ez(cl((st-4)/1.2));if(st<4||st>10.5)return;
+const B=t=>{const a=1-t;return[a*a*W*.12+2*a*t*W*.5+t*t*W*.75,a*a*H*.1+2*a*t*H*.02+t*t*H*.66]};
+x.globalCompositeOperation='lighter';
+for(let j=0;j<22;j++){const t=k-j*.014;if(t<=0)continue;const p=B(t),al=(1-j/22)*(1-cl((st-9)/1.5));glow(p[0]+Math.sin(j*7)*5*u,p[1]+Math.cos(j*5)*5*u,(14-j*.4)*u,al*.8)}
+if(k<1){const p=B(k),sz=(10+6*Math.sin(k*3.14))*u*gr;glow(p[0],p[1],sz*3,gr);x.globalCompositeOperation='source-over';x.globalAlpha=gr;x.fillStyle='#FFF3C8';x.beginPath();[[0,-sz],[sz*.16,-sz*.16],[sz,0],[sz*.16,sz*.16],[0,sz],[-sz*.16,sz*.16],[-sz,0],[-sz*.16,-sz*.16]].forEach((q,i)=>i?x.lineTo(p[0]+q[0],p[1]+q[1]):x.moveTo(p[0]+q[0],p[1]+q[1]));x.fill()}
+x.globalCompositeOperation='source-over';x.globalAlpha=1}
+function glow(px,py,r,a){x.globalAlpha=cl(a);x.drawImage(G,px-r,py-r,2*r,2*r)}
+function rr(a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
+function burst(px,py,n){const st2=rnd()<.4,c=['255,224,130','255,255,255','160,210,255','255,160,200'][rnd()*4|0];for(let i=0;i<n;i++){const a=rnd()*6.283,v=(.3+rnd()*.7)*Math.min(W,H)*.45*(st2?1+.45*Math.cos(5*a):1)*(rnd()<.4?.6:1);FW.push({x:px,y:py,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1.2+rnd()*.7,c})}}
+function conf(n){for(let i=0;i<n;i++)CF.push({x:rnd()*W,y:-rnd()*H*.4,vx:(rnd()-.5)*50*u,vy:(50+rnd()*100)*u,r:rnd()*6,vr:(rnd()-.5)*8,w:(5+rnd()*5)*u,h:(3+rnd()*4)*u,c:COLF[rnd()*4|0]})}
+function cake(st){const cw=Math.min(W*.4,H*.22),h=cw*.2,by=H*.93,ca=ez(cl(st/3));x.globalAlpha=ca;[[1,'#FFE3EC'],[.72,'#FFF4D6'],[.46,'#DDEBFF']].forEach((t,i)=>{const w=cw*t[0],y=by-i*h;x.fillStyle=t[1];rr(cx-w/2,y-h,w,h,h*.2);x.fill();x.fillStyle='rgba(255,255,255,.8)';rr(cx-w/2,y-h,w,h*.25,h*.12);x.fill()});
+const ty=by-3*h;for(let i=0;i<5;i++){const px=cx+(i-2)*cw*.09,on=st>2+i*.6;x.globalAlpha=ca;x.fillStyle='#fff';x.fillRect(px-2*u,ty-h*.5,4*u,h*.5);if(on){const f=Math.sin(R*12+i)*.15;x.globalCompositeOperation='lighter';glow(px,ty-h*.7,cw*.12,.9);x.fillStyle='#FFD27A';x.beginPath();x.ellipse(px,ty-h*.62,2.5*u,h*.2*(1+f),0,0,6.283);x.fill();x.globalCompositeOperation='source-over'}}x.globalAlpha=1}
+function num18(st,t0n){const k=cl((st-t0n)/6);if(k<=0)return;x.globalCompositeOperation='lighter';const sc2=Math.min(W*.2,H*.12);for(const p of NP){const kp=ez(cl((k-p.d)/.6)),px=cx+L(p.sx*W*.5,p.a[0]*sc2,kp)+Math.sin(R*1.3+p.p)*2,py=H*.3+L(p.sy*H*.3,p.a[1]*sc2,kp),r=(3+Math.sin(R*3+p.p))*u;x.globalAlpha=.8;x.drawImage(G,px-r*2,py-r*2,r*4,r*4)}x.globalCompositeOperation='source-over';x.globalAlpha=1}
+function balloons(st,t0n){for(let i=0;i<9;i++){const k=ez(cl((st-t0n-i*.8)/10));if(k<=0||k>=1&&st>999)continue;const bx=[.08,.2,.9,.78,.12,.86,.3,.7,.5][i]*W+Math.sin(R*.6+i)*8,by=L(H*1.1,H*(.15+(i%4)*.12),k),s=Math.min(W,H)*.06;x.strokeStyle='rgba(255,255,255,.5)';x.beginPath();x.moveTo(bx,by+s*.6);x.lineTo(bx,by+s*2);x.stroke();x.fillStyle=COLF[i%4];x.beginPath();x.ellipse(bx,by,s*.45,s*.55,0,0,6.283);x.fill();x.fillStyle='rgba(255,255,255,.35)';x.beginPath();x.ellipse(bx-s*.15,by-s*.2,s*.1,s*.18,0,0,6.283);x.fill()}}
+function lanterns(){x.globalCompositeOperation='lighter';for(let i=0;i<6;i++){const lx=((i*.19+.08)*W+Math.sin(R*.4+i)*10),ly=((H*(.6-(R*.01*(1+i*.1)+i*.17)%1*.6)+H*.05));glow(lx,ly,24*u,.8);}x.globalCompositeOperation='source-over';x.globalAlpha=1}
+function draw(dt){const s=S[sc],st=R-t0;x.globalAlpha=1;x.globalCompositeOperation='source-over';sky(s);if(sc==0)night0(st);
+x.save();if(!RM&&sc<4){const z=1+.04*cl(st/25);x.translate(cx,H*.9);x.scale(z,z);x.translate(-cx,-H*.9)}
+if(sc==2){x.globalCompositeOperation='lighter';glow(W*.7,H*.52,W*.6,.7);x.globalCompositeOperation='source-over'}
+if(s.m){const ma=sc==0?ez(cl((st-8)/3)):1,mb=sc==0?ez(cl((st-9.5)/3)):1;x.globalAlpha=ma;mount(s.m[0],.62,.16,1);x.globalAlpha=mb;mount(s.m[1],.76,.12,4);x.globalCompositeOperation='lighter';x.globalAlpha=.12*ma;x.drawImage(G,((R*10)%(W*1.6))-W*.5,H*.62,W*.9,H*.14);x.globalAlpha=1;x.globalCompositeOperation='source-over'}
+const g=x.createLinearGradient(0,H*.86,0,H);g.addColorStop(0,sc==2?'#3A3350':'#0B2A24');g.addColorStop(1,'#04120F');x.fillStyle=g;x.fillRect(0,H*.88,W,H*.12);
+if(sc!=6&&sc!=7||sc==7)for(const f of FL)if(sc!=8||stg==0||fin)flower(f,s,st,0);
+if(false){const k=(st-3)/2,px=W*(.9-k*.7),py=H*(.08+k*.25);x.globalCompositeOperation='lighter';x.strokeStyle='rgba(255,240,200,'+(1-k*.5)+')';x.lineWidth=3*u;x.beginPath();x.moveTo(px,py);x.lineTo(px+W*.12,py-H*.05);x.stroke();glow(px,py,30*u,1);x.globalCompositeOperation='source-over'}
+if(sc==1||sc==7){lanterns();balloons(st,sc==7?1:3);if(sc==1){cake(st);if(st>6&&!s.cf){s.cf=1;conf(100)}num18(st,8);if(st>11&&rnd()<.01)burst(W*(rnd()<.5?.15:.85),H*(.1+rnd()*.25),24)}
+else{num18(st,5);if(st>3&&!s.cf){s.cf=1;conf(120)}if(st>3&&st<tm[3]+30&&rnd()<.03)burst(W*(rnd()<.5?.1+rnd()*.2:.7+rnd()*.2),H*(.08+rnd()*.25),30)}}
+if(sc==2){x.fillStyle='rgba(25,15,40,.95)';[.43,.55].forEach((px,i)=>{const bx=px*W,by=H*.88,k=ez(cl((st-2-i)/3));x.globalAlpha=k;x.beginPath();x.arc(bx,by-H*.1,H*.018,0,6.283);x.fill();rr(bx-H*.02,by-H*.085,H*.04,H*.06,6);x.fill();rr(bx-H*.02,by-H*.03,H*.07,H*.022,4);x.fill()});x.globalAlpha=1}
+if(sc==3){const ty=H*.8,k=cl(st/5);x.fillStyle='#6B4A2B';x.fillRect(W*.08,ty,W*.84,H*.025);x.fillRect(W*.14,ty,W*.03,H*.1);x.fillRect(W*.83,ty,W*.03,H*.1);
+const bw=W*.2,bx=cx-bw/2,bh=H*.012;x.fillStyle='#C9A66B';x.fillRect(bx-bw*.05,ty-bh*3,bw*1.1,bh*3);x.fillStyle='#F2E6C4';x.save();x.translate(cx,ty-bh*3);x.scale(k,1);x.fillRect(-bw/2,-bh*2,bw/2,bh*2);x.transform(1,0,0,1,0,Math.sin(R*2)*1.5);x.fillRect(0,-bh*2,bw/2,bh*2);x.restore();
+const cy=st>12?Math.min(ty+H*.04,H*.5+(st-12)*(st-12)*H*.04):H*.5+Math.sin(R*2)*4,cs=Math.min(W,H)*.06;x.fillStyle='#E7C66A';x.save();x.translate(cx,Math.min(cy,ty-bh*3)-cs*.5);x.rotate(.15);x.beginPath();x.moveTo(-cs,cs*.5);x.lineTo(-cs,-cs*.3);x.lineTo(-cs*.5,0);x.lineTo(0,-cs*.5);x.lineTo(cs*.5,0);x.lineTo(cs,-cs*.3);x.lineTo(cs,cs*.5);x.fill();x.restore();
+const bx2=W*(.2+.5*((R*.03)%1)),by2=H*.55+Math.sin(R*1.3)*H*.05,fl=Math.abs(Math.sin(R*9));x.fillStyle='#FFB86B';x.beginPath();x.ellipse(bx2-5*u,by2,6*u*fl+1,8*u,-.5,0,6.283);x.ellipse(bx2+5*u,by2,6*u*fl+1,8*u,.5,0,6.283);x.fill()}
+if(sc==4){x.globalCompositeOperation='lighter';glow(W*.14,H*.8,W*.55,.5+Math.sin(R*9)*.08);x.globalCompositeOperation='source-over';x.fillStyle='#EFE3C8';x.fillRect(W*.14-5*u,H*.84,10*u,H*.1);x.globalCompositeOperation='lighter';x.fillStyle='#FFCF7A';x.beginPath();x.ellipse(W*.14,H*.825,4*u,11*u*(1+Math.sin(R*11)*.1),0,0,6.283);x.fill();x.globalCompositeOperation='source-over'}
+if(sc==5){const k=cl((st-2)/4),sS=Math.min(W,H)*.0055*(1+.05*Math.sin(R*3)*(k>=1?1:0)),hy=H*.2;x.strokeStyle='#fff';x.lineWidth=2.5*u;x.beginPath();for(let i=0;i<=60*k;i++){const p=hp(i/60*6.2832);i?x.lineTo(cx+p[0]*sS*1.2,hy+p[1]*sS*1.2):x.moveTo(cx+p[0]*sS*1.2,hy+p[1]*sS*1.2)}x.stroke();x.globalCompositeOperation='lighter';glow(cx,hy,H*.15,k*.5);x.globalCompositeOperation='source-over';
+const py=H*.12+(R*20)%(H*.3);x.fillStyle='#fff';x.beginPath();x.ellipse(cx+Math.sin(R)*20,py,6*u,3*u,R,0,6.283);x.fill()}
+if(sc==6){x.globalCompositeOperation='lighter';glow(cx,H*.5,W*.9,.35);x.globalCompositeOperation='source-over'}
+if(sc==8){const hs=Math.min(W,H)*.011,hy=H*.5;if(stg==0){const sa=.6+.4*Math.sin(R*3);x.globalCompositeOperation='lighter';glow(cx,H*.35,34*u,sa);glow(cx,H*.35,14*u,1);x.globalCompositeOperation='source-over';x.globalAlpha=1}
+else{const k=stg==1?cl((R-t1)/3):1,fade=stg==3?1-cl((R-t1)/2):1;x.globalAlpha=.9*fade;x.strokeStyle='#fff';x.lineWidth=3*u;x.beginPath();for(let i=0;i<=80*k;i++){const p=hp(i/80*6.2832);i?x.lineTo(cx+p[0]*hs,hy+p[1]*hs):x.moveTo(cx+p[0]*hs,hy+p[1]*hs)}x.stroke();x.globalCompositeOperation='lighter';glow(cx,hy,hs*22,.25*fade);if(stg==1){const p=hp(k*6.2832);glow(cx+p[0]*hs,hy+p[1]*hs,30*u,1)}x.globalCompositeOperation='source-over';x.globalAlpha=1;
+if(stg==1&&k>=1){stg=2;t1=R;$('card').classList.add('on')}
+if(stg==3){const k3=(R-t1)/6,fa=cl(1-Math.abs(k3-.2)*1.2)*0+cl(k3<.5?1-k3*2:0);const sy=H*.5-ez(cl((k3-.5)/.5))*H*.6,pr=ez(cl((k3-.1)/.35));x.globalAlpha=k3<.5?1:cl(1-(k3-.5)*1.4);x.fillStyle='#fff';if(k3<.5)for(let i=0;i<6;i++){const a=i*1.047,rr2=hs*8*(1-pr*.6);x.beginPath();x.ellipse(cx+Math.cos(a)*rr2*.8,hy+Math.sin(a)*rr2*.8,rr2*.55,rr2*.28,a,0,6.283);x.fill()}
+x.globalCompositeOperation='lighter';glow(cx,sy,40*u,k3>.3?1:0);x.globalCompositeOperation='source-over';x.globalAlpha=1;if(k3>=1&&!fin)finish()}}}
+x.restore();
+if(sc==2||sc==3||sc==7)for(let i=0;i<3;i++){const bx=W*(.5+.4*Math.sin(R*.21+i*2.1)),by=H*(.62+.12*Math.sin(R*.33+i*1.7))+Math.sin(R*3+i)*6,fl=Math.abs(Math.sin(R*10+i));x.fillStyle=['#FFB86B','#B8D8FF','#FFC6E8'][i];x.beginPath();x.ellipse(bx-5*u,by,5*u*fl+1,7*u,-.5,0,6.283);x.ellipse(bx+5*u,by,5*u*fl+1,7*u,.5,0,6.283);x.fill()}
+// pétalas e partículas
+x.fillStyle='rgba(255,255,255,.85)';for(const p of PT){const px=((p.x*W+Math.sin(R*.7+p.p)*30+R*8*p.s)%W+W)%W,py=((p.y*H+R*22*p.s)%(H*1.1));x.beginPath();x.ellipse(px,py,5*u,2.5*u,R*p.s+p.p,0,6.283);x.fill()}
+x.globalCompositeOperation='lighter';for(const m of MT){x.globalAlpha=.25+.25*Math.sin(R*1.5+m.p);const r=m.r*u;x.drawImage(G,m.x*W+Math.sin(R*.4+m.p)*8-r*2,((m.y*H-R*8)%H+H)%H-r*2,r*4,r*4)}
+for(let i=FW.length-1;i>=0;i--){const p=FW[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=Math.min(W,H)*.3*dt;p.vx*=.99;p.l-=dt;if(p.l<=0){FW.splice(i,1);continue}x.globalAlpha=cl(p.l/1.2);x.fillStyle='rgb('+p.c+')';x.beginPath();x.arc(p.x,p.y,2*u,0,6.283);x.fill()}
+x.globalCompositeOperation='source-over';for(let i=CF.length-1;i>=0;i--){const p=CF[i];p.x+=(p.vx+Math.sin(R*2+p.r)*20)*dt;p.y+=p.vy*dt;p.r+=p.vr*dt;if(p.y>H+20){CF.splice(i,1);continue}x.save();x.globalAlpha=.9;x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.h/2,p.w,p.h);x.restore()}x.globalAlpha=1;
+if(fin){x.fillStyle='rgba(8,16,40,.15)';x.fillRect(0,0,W,H)}}
+function ui(){const st=R-t0,s=S[sc];let cur=-1;tm.forEach((t,i)=>{if(st>=t)cur=i});if(cur!=shown){shown=cur;[...$('tx').children].forEach((d,i)=>d.classList.toggle('on',i<=cur&&i>cur-2))}
+if(s.card&&sc!=8){$('card').classList.toggle('on',st>2.5&&!trans);if(st>Math.min(50,s.card.length*.02)+2.5)$('nx').classList.add('on')}
+else if(sc==8){if(stg==2&&R-t1>Math.min(40,s.card.length*.02)+2){$('nx').textContent='continuar ›';$('nx').classList.add('on')}if(stg==3&&R-t1>6){}}
+else if(st>tm[tm.length-1]+2)$('nx').classList.add('on');
+if(!s.card&&st>endT&&!trans)next()}
+function frame(ts){requestAnimationFrame(frame);const dt=Math.min(.05,(ts-last)/1000||.016);last=ts;R+=dt;
+if(!go){x.fillStyle='#07112A';x.fillRect(0,0,W,H);x.fillStyle='#fff';ST.forEach(a=>{x.globalAlpha=.4+.5*Math.sin(R*2+a[3]);x.fillRect(a[0]*W,a[1]*H,a[2]*u,a[2]*u)});x.globalAlpha=1;return}
+if(trans){trans.t+=dt;if(!trans.sw&&trans.t>=1){trans.sw=1;load(trans.to)}}
+draw(dt);if(trans){const a=trans.t<1?trans.t:2-trans.t;x.fillStyle='rgba('+trans.c+','+cl(a)+')';x.fillRect(0,0,W,H);if(trans.t>=2)trans=null}
+if(!trans)ui();
+if(AC&&R>nb){nb=R+1.8+rnd()*1.6;tone(PE[rnd()*6|0],2.6,.03)}}
+rs();try{if(+sessionStorage.getItem('a18')>0)$('st').textContent='toque para continuar'}catch(e){}
+requestAnimationFrame(frame);
+</script></body></html>

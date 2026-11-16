@@ -1,0 +1,13 @@
+:root {
+  --bg: #07112A;
+  --text-light: #FFFFFF;
+  --text-gold: #FFE9A8;
+  --paper-ink: #362516;
+  --paper-border: rgba(92, 62, 32, .26);
+  --paper-outline: rgba(112, 78, 44, .16);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  box-sizing: border-box;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}

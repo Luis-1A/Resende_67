@@ -1,0 +1,39 @@
+button {
+  position: fixed;
+  font-family: inherit;
+  color: var(--text-light);
+  background: rgba(12, 16, 28, .48);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, .38);
+  border-radius: 22px;
+  padding: 10px 26px;
+  font-size: clamp(14px, 3vw, 18px);
+  letter-spacing: .14em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.2s, background .2s, border-color .2s;
+  z-index: 8;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, .16);
+  border-color: rgba(255, 255, 255, .64);
+}
+
+button:focus-visible {
+  outline: 2px solid rgba(242, 217, 140, .85);
+  outline-offset: 3px;
+}
+
+button.on {
+  opacity: .92;
+  pointer-events: auto;
+}
+
+#nx {
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(4.5vh + var(--safe-bottom));
+}

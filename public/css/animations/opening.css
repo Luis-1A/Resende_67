@@ -1,0 +1,36 @@
+#st {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 55%;
+  text-align: center;
+  color: var(--text-light);
+  font-size: clamp(16px, 3.2vw, 22px);
+  letter-spacing: .3em;
+  animation: stPulse 3s ease-in-out infinite;
+  text-shadow: 0 0 18px rgba(150, 200, 255, .7);
+  z-index: 5;
+  pointer-events: none;
+}
+
+@keyframes stPulse {
+  50% { opacity: .3; }
+}
+
+.name {
+  font-size: clamp(38px, 12vw, 80px);
+  letter-spacing: .14em;
+  font-weight: 600;
+  background: linear-gradient(90deg, #fff, #f2d98c, #fff6d6, #f2d98c, #fff);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 0 18px rgba(242, 217, 140, .28));
+  animation: nameShimmer 5.5s linear infinite;
+}
+
+@keyframes nameShimmer {
+  to { background-position: 300% 0; }
+}

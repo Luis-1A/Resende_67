@@ -1,0 +1,11 @@
+.big {
+  font-size: clamp(26px, 7.5vw, 56px);
+  font-weight: 600;
+  letter-spacing: .04em;
+  filter: blur(3px);
+  transition: opacity 1.8s, transform 1.8s, filter 2s;
+}
+
+.big.on {
+  filter: blur(0);
+}

@@ -1,0 +1,63 @@
+#card {
+  position: fixed;
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  width: min(86vw, 560px);
+  max-height: 62vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 4vh 6vw;
+  background: radial-gradient(circle at 25% 18%, #FBF3E2 0%, #F3E4C6 58%, #E8D4AE 100%);
+  color: var(--paper-ink);
+  border-radius: 6px;
+  border: 1px solid var(--paper-border);
+  outline: 1px solid var(--paper-outline);
+  outline-offset: -10px;
+  box-shadow: 0 22px 64px rgba(0, 0, 0, .62), inset 0 0 36px rgba(98, 64, 30, .12);
+  font-size: clamp(16px, 2.4vw, 21px);
+  line-height: 1.58;
+  opacity: 0;
+  transition: opacity 1.8s;
+  pointer-events: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  z-index: 6;
+}
+
+#card.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#card.dk {
+  background: transparent;
+  color: var(--text-light);
+  border: none;
+  outline: none;
+  box-shadow: none;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .92);
+  text-align: center;
+}
+
+#card h3 {
+  margin: 0 0 1.1em;
+  padding-bottom: .55em;
+  border-bottom: 1px solid rgba(92, 62, 32, .22);
+  text-align: center;
+  font-size: 1.05em;
+  letter-spacing: .14em;
+}
+
+#card p {
+  margin: 0 0 1em;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 1.1s ease, transform 1.1s ease;
+}
+
+#card.on p.vis {
+  opacity: 1;
+  transform: none;
+}
