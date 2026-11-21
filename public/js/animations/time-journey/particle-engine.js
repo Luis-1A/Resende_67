@@ -7,6 +7,10 @@ export class ParticleEngine {
     this.active = [];
     this.free = [];
     this.lowPower = false;
+    this._glows = [];
+    this._streaks = [];
+    this._dots = [];
+    this._petals = [];
   }
 
   configureQuality({ lowPower = false, maxCap = 720 } = {}) {
@@ -152,6 +156,15 @@ export class ParticleEngine {
 
   render(x, env) {
     const { W, H, u } = env;
+    const glows = this._glows;
+    const streaks = this._streaks;
+    const dots = this._dots;
+    const petals = this._petals;
+    glows.length = 0;
+    streaks.length = 0;
+    dots.length = 0;
+    petals.length = 0;
+
     for (let i = 0; i < this.active.length; i++) {
       const p = this.active[i];
       if (p.delay > 0) continue;
@@ -164,15 +177,71 @@ export class ParticleEngine {
       const al = p.alpha * fadeIn * fadeOut * depthBlurFade;
       if (al <= 0.01) continue;
 
-      const px = p.x * W;
-      const py = p.y * H;
-      const sz = p.size * depthScale * u;
+      p._al = al;
+      p._px = p.x * W;
+      p._py = p.y * H;
+      p._sz = p.size * depthScale * u;
 
-      if (p.shape === 'petal') {
+      if (p.shape === 'petal') petals.push(p);
+      else if (p.shape === 'streak') streaks.push(p);
+      else if (p.shape === 'dot') dots.push(p);
+      else glows.push(p);
+    }
+
+    if (glows.length) {
+      x.save();
+      x.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < glows.length; i++) {
+        const p = glows[i];
+        glow(x, p._px, p._py, p._sz * (2.0 + p.glowIntensity * 1.4), p._al, p.cool ? GB : G);
+      }
+      x.restore();
+    }
+
+    if (streaks.length) {
+      x.save();
+      x.globalCompositeOperation = 'lighter';
+      x.lineCap = 'round';
+      for (let i = 0; i < streaks.length; i++) {
+        const p = streaks[i];
+        x.globalAlpha = p._al;
+        x.strokeStyle = p.color;
+        x.lineWidth = Math.max(1, p._sz * 0.65);
+        x.beginPath();
+        x.moveTo(p._px, p._py);
+        x.lineTo(p._px - p.vx * W * 0.035, p._py - p.vy * H * 0.035);
+        x.stroke();
+      }
+      x.restore();
+    }
+
+    if (dots.length) {
+      x.save();
+      for (let i = 0; i < dots.length; i++) {
+        const p = dots[i];
+        const r = Math.max(0.7, p._sz * 0.65);
+        x.globalAlpha = p._al;
+        x.fillStyle = p.color;
+        if (r <= 1.8) {
+          x.fillRect(p._px - r, p._py - r, r * 2, r * 2);
+        } else {
+          x.beginPath();
+          x.arc(p._px, p._py, r, 0, TAU);
+          x.fill();
+        }
+      }
+      x.restore();
+    }
+
+    if (petals.length) {
+      x.save();
+      for (let i = 0; i < petals.length; i++) {
+        const p = petals[i];
+        const sz = p._sz;
         x.save();
-        x.translate(px, py);
+        x.translate(p._px, p._py);
         x.rotate(p.rot);
-        x.globalAlpha = al;
+        x.globalAlpha = p._al;
         x.fillStyle = p.color;
         x.beginPath();
         x.moveTo(0, -sz * 0.65);
@@ -180,32 +249,8 @@ export class ParticleEngine {
         x.bezierCurveTo(-sz * 0.58, sz * 0.62, -sz * 0.72, -sz * 0.3, 0, -sz * 0.65);
         x.fill();
         x.restore();
-      } else if (p.shape === 'streak') {
-        x.save();
-        x.globalCompositeOperation = 'lighter';
-        x.globalAlpha = al;
-        x.strokeStyle = p.color;
-        x.lineWidth = Math.max(1, sz * 0.65);
-        x.lineCap = 'round';
-        x.beginPath();
-        x.moveTo(px, py);
-        x.lineTo(px - p.vx * W * 0.035, py - p.vy * H * 0.035);
-        x.stroke();
-        x.restore();
-      } else if (p.shape === 'dot') {
-        x.save();
-        x.globalAlpha = al;
-        x.fillStyle = p.color;
-        x.beginPath();
-        x.arc(px, py, Math.max(0.6, sz * 0.65), 0, TAU);
-        x.fill();
-        x.restore();
-      } else {
-        x.save();
-        x.globalCompositeOperation = 'lighter';
-        glow(x, px, py, sz * (2.0 + p.glowIntensity * 1.4), al, p.cool ? GB : G);
-        x.restore();
       }
+      x.restore();
     }
     x.globalAlpha = 1;
   }

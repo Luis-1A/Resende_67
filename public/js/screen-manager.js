@@ -35,7 +35,7 @@ export const screenManager = {
 
   updateSize() {
     if (!this._canvas || !this._ctx) return;
-    this.DPR = Math.min(devicePixelRatio || 1, settings.isMobile ? 1.25 : 1.6);
+    this.DPR = Math.min(devicePixelRatio || 1, settings.isMobile ? 1.15 : 1.5);
     this.W = innerWidth;
     this.H = innerHeight;
     this._canvas.width = this.W * this.DPR;

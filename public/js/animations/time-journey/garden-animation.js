@@ -1,4 +1,24 @@
-import { cl, ez, L, rnd, glow, G, TAU } from '../../utils.js';
+import { cl, ez, L, rnd, glow, mkSpr, G, TAU } from '../../utils.js';
+
+let _raySprite = null;
+function getRaySprite() {
+  if (_raySprite) return _raySprite;
+  _raySprite = mkSpr(64, 256, c => {
+    const g = c.createLinearGradient(0, 0, 0, 256);
+    g.addColorStop(0, 'rgba(255,234,178,1)');
+    g.addColorStop(0.68, 'rgba(255,234,178,0.28)');
+    g.addColorStop(1, 'rgba(255,234,178,0)');
+    c.fillStyle = g;
+    c.beginPath();
+    c.moveTo(22, 0);
+    c.lineTo(42, 0);
+    c.lineTo(64, 256);
+    c.lineTo(0, 256);
+    c.closePath();
+    c.fill();
+  });
+  return _raySprite;
+}
 
 export const gardenAnimation = {
   _dawnBlend: 0,
@@ -7,6 +27,12 @@ export const gardenAnimation = {
   _pathProgress: 0,
   _pathGlow: 0,
   _grassTufts: [],
+  _skyGrad: null,
+  _skyKey: '',
+  _gndGrad: null,
+  _gndKey: '',
+  _pathGrad: null,
+  _pathKey: '',
 
   init() {
     this._dawnBlend = 0;
@@ -14,6 +40,12 @@ export const gardenAnimation = {
     this._gardenGrowth = 0;
     this._pathProgress = 0;
     this._pathGlow = 0;
+    this._skyGrad = null;
+    this._skyKey = '';
+    this._gndGrad = null;
+    this._gndKey = '';
+    this._pathGrad = null;
+    this._pathKey = '';
 
     // Specific soil anchor points for garden foliage & curved leaves
     this._grassTufts = Array.from({ length: 26 }, (_, i) => {
@@ -48,16 +80,25 @@ export const gardenAnimation = {
     const { W, H, cx, R, RM } = env;
     const d = ez(this._dawnBlend);
 
-    // Blend smoothly from very dark night blue to radiant dawn blue
-    const topCol = `rgb(${Math.round(L(2, 16, d))}, ${Math.round(L(6, 40, d))}, ${Math.round(L(22, 92, d))})`;
-    const midCol = `rgb(${Math.round(L(6, 36, d))}, ${Math.round(L(17, 74, d))}, ${Math.round(L(46, 134, d))})`;
-    const botCol = `rgb(${Math.round(L(11, 74, d))}, ${Math.round(L(28, 114, d))}, ${Math.round(L(68, 166, d))})`;
+    // Quantize slightly during crossfades so gradient object isn't recreated identically every frame
+    const r0 = Math.round(L(2, 16, d));
+    const g0 = Math.round(L(6, 40, d));
+    const b0 = Math.round(L(22, 92, d));
+    const r2 = Math.round(L(11, 74, d));
+    const g2 = Math.round(L(28, 114, d));
+    const b2 = Math.round(L(68, 166, d));
+    const skyKey = `${H}|${r0},${g0},${b0}|${r2},${g2},${b2}`;
 
-    const sky = x.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, topCol);
-    sky.addColorStop(0.54, midCol);
-    sky.addColorStop(1, botCol);
-    x.fillStyle = sky;
+    if (!this._skyGrad || this._skyKey !== skyKey) {
+      this._skyKey = skyKey;
+      const sky = x.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, `rgb(${r0},${g0},${b0})`);
+      sky.addColorStop(0.54, `rgb(${Math.round(L(6, 36, d))},${Math.round(L(17, 74, d))},${Math.round(L(46, 134, d))})`);
+      sky.addColorStop(1, `rgb(${r2},${g2},${b2})`);
+      this._skyGrad = sky;
+    }
+
+    x.fillStyle = this._skyGrad;
     x.fillRect(0, 0, W, H);
 
     // Central horizon golden sunrise glow
@@ -68,23 +109,21 @@ export const gardenAnimation = {
       x.restore();
     }
 
-    // Soft volumetric diagonal light rays
+    // Soft volumetric diagonal light rays via cached offscreen sprite
     if (this._rayIntensity > 0.01) {
+      const spr = getRaySprite();
+      const rayH = H * 0.85;
+      const rayW = W * 0.22;
       x.save();
       x.globalCompositeOperation = 'lighter';
+      x.globalAlpha = this._rayIntensity * 0.24;
       for (let i = 0; i < 4; i++) {
         const bx = W * (0.18 + i * 0.22) + (RM ? 0 : Math.sin(R * 0.25 + i) * W * 0.025);
-        const rg = x.createLinearGradient(bx, 0, bx + W * 0.09, H * 0.85);
-        rg.addColorStop(0, `rgba(255,234,178,${this._rayIntensity * 0.24})`);
-        rg.addColorStop(1, 'rgba(255,234,178,0)');
-        x.fillStyle = rg;
-        x.beginPath();
-        x.moveTo(bx - W * 0.03, 0);
-        x.lineTo(bx + W * 0.035, 0);
-        x.lineTo(bx + W * 0.16, H * 0.85);
-        x.lineTo(bx - W * 0.04, H * 0.85);
-        x.closePath();
-        x.fill();
+        x.save();
+        x.translate(bx, 0);
+        x.transform(1, 0, 0.09, 1, 0, 0);
+        x.drawImage(spr, -rayW * 0.35, 0, rayW, rayH);
+        x.restore();
       }
       x.restore();
     }
@@ -100,13 +139,21 @@ export const gardenAnimation = {
     if (ggReveal > 0.01) {
       x.save();
       x.globalAlpha = ggReveal;
-      const gnd = x.createLinearGradient(0, groundY, 0, H);
-      gnd.addColorStop(0, '#0C3227');
-      gnd.addColorStop(1, '#04120E');
-      x.fillStyle = gnd;
+      const gndKey = `${groundY.toFixed(1)}|${H}`;
+      if (!this._gndGrad || this._gndKey !== gndKey) {
+        this._gndKey = gndKey;
+        const gnd = x.createLinearGradient(0, groundY, 0, H);
+        gnd.addColorStop(0, '#0C3227');
+        gnd.addColorStop(1, '#04120E');
+        this._gndGrad = gnd;
+      }
+      x.fillStyle = this._gndGrad;
       x.fillRect(0, groundY, W, H - groundY);
 
       // Soil vegetation tufts & curved swaying leaves growing bottom-up
+      x.strokeStyle = '#2B6E4A';
+      x.lineWidth = Math.max(1.5, 2.2 * u);
+      x.lineCap = 'round';
       for (const tuft of this._grassTufts) {
         const localK = ez(cl((this._gardenGrowth - tuft.delay * 0.4) / 0.55));
         if (localK <= 0.02) continue;
@@ -115,9 +162,6 @@ export const gardenAnimation = {
         const h = tuft.height * H * localK * cameraScale;
         const sway = RM ? 0 : Math.sin(R * 1.4 + tuft.phase) * 4 * u;
 
-        x.strokeStyle = '#2B6E4A';
-        x.lineWidth = Math.max(1.5, 2.2 * u);
-        x.lineCap = 'round';
         x.beginPath();
         x.moveTo(bx, by);
         x.quadraticCurveTo(bx + tuft.lean * 12 * u, by - h * 0.55, bx + tuft.lean * 22 * u + sway, by - h);
@@ -136,12 +180,18 @@ export const gardenAnimation = {
 
       x.save();
       x.globalCompositeOperation = 'lighter';
-      const pathGrad = x.createLinearGradient(cx, topY, cx, botY);
-      pathGrad.addColorStop(0, `rgba(255,232,162,${0.18 * this._pathGlow})`);
-      pathGrad.addColorStop(0.5, `rgba(255,224,142,${0.34 * this._pathGlow})`);
-      pathGrad.addColorStop(1, `rgba(255,240,188,${0.48 * this._pathGlow})`);
+      const pKey = `${cx.toFixed(0)}|${topY.toFixed(1)}|${botY}`;
+      if (!this._pathGrad || this._pathKey !== pKey) {
+        this._pathKey = pKey;
+        const pg = x.createLinearGradient(cx, topY, cx, botY);
+        pg.addColorStop(0, 'rgba(255,232,162,0.18)');
+        pg.addColorStop(0.5, 'rgba(255,224,142,0.34)');
+        pg.addColorStop(1, 'rgba(255,240,188,0.48)');
+        this._pathGrad = pg;
+      }
 
-      x.fillStyle = pathGrad;
+      x.globalAlpha = this._pathGlow;
+      x.fillStyle = this._pathGrad;
       x.beginPath();
       x.moveTo(cx - topHalf, topY);
       x.lineTo(cx + topHalf, topY);
@@ -152,6 +202,7 @@ export const gardenAnimation = {
       x.fill();
 
       // Golden illuminated center stream
+      x.globalAlpha = 1;
       x.strokeStyle = `rgba(255,244,205,${0.55 * pK * this._pathGlow})`;
       x.lineWidth = 3 * u;
       x.beginPath();

@@ -1,10 +1,11 @@
-import { cl, ez, L, glow, CG, G, TAU, hexToRgb, syncDynamicTextContrast } from '../../utils.js';
+import { cl, ez, L, glow, mkSpr, CG, G, hexToRgb, syncDynamicTextContrast } from '../../utils.js';
 import { particleSystem } from '../../visual-engine/particle-system.js';
 import { finaleAudioSync } from './finale-audio-sync.js';
 import { finaleTimeline, FINALE_SPEED_SCALE } from './finale-timeline.js';
 import { FINALE_PALETTES } from './config/finale-effects.js';
+import { getFinaleQuality } from './config/finale-quality.js';
 
-import { finaleGoldenParticles } from './effects/golden-particles.js';
+import { finaleGoldenParticles, sampleTextTargets } from './effects/golden-particles.js';
 import { finaleStars } from './effects/stars.js';
 import { finaleButterflies } from './effects/butterflies.js';
 import { finaleFlowers } from './effects/flowers.js';
@@ -27,11 +28,24 @@ import act10 from './acts/act-10-birthday-title.js';
 import act11 from './acts/act-11-final-message.js';
 import act12 from './acts/act-12-last-surprise.js';
 
-function lerpRgbStr(a, b, k) {
-  const r = Math.round(L(a[0], b[0], k));
-  const g = Math.round(L(a[1], b[1], k));
-  const bl = Math.round(L(a[2], b[2], k));
-  return `rgb(${r},${g},${bl})`;
+let _finaleRaySpr = null;
+function getFinaleRaySpr() {
+  if (_finaleRaySpr) return _finaleRaySpr;
+  _finaleRaySpr = mkSpr(64, 256, c => {
+    const g = c.createLinearGradient(0, 0, 0, 256);
+    g.addColorStop(0, 'rgba(255,228,175,1)');
+    g.addColorStop(0.68, 'rgba(255,228,175,0.28)');
+    g.addColorStop(1, 'rgba(255,228,175,0)');
+    c.fillStyle = g;
+    c.beginPath();
+    c.moveTo(22, 0);
+    c.lineTo(42, 0);
+    c.lineTo(64, 256);
+    c.lineTo(0, 256);
+    c.closePath();
+    c.fill();
+  });
+  return _finaleRaySpr;
 }
 
 export const grandFinaleAnimation = {
@@ -62,6 +76,10 @@ export const grandFinaleAnimation = {
   _M0: [],
   _M1: [],
   _lastSizeKey: '',
+  _skyGrad: null,
+  _skyKey: '',
+  _gndGrad: null,
+  _gndH: 0,
 
   init(ctx) {
     this._ctx = ctx;
@@ -111,6 +129,30 @@ export const grandFinaleAnimation = {
     finaleConfetti.init();
     finaleLanterns.init();
     finaleTimeline.reset();
+
+    // Pre-warm typographic particle masks upfront to eliminate mid-finale getImageData hitches
+    const typoMax = getFinaleQuality().typoParticlesMax;
+    sampleTextTargets('18', {
+      w: 460,
+      h: 160,
+      font: '700 124px "Cinzel", "Playfair Display", Georgia, serif',
+      step: 4,
+      maxPoints: Math.min(260, typoMax)
+    });
+    sampleTextTargets('ANDERSON', {
+      w: 460,
+      h: 160,
+      font: '700 84px "Cinzel", "Playfair Display", Georgia, serif',
+      step: 3,
+      maxPoints: Math.min(600, typoMax)
+    });
+    sampleTextTargets('FELIZ', {
+      w: 460,
+      h: 160,
+      font: '700 90px "Cinzel", "Playfair Display", Georgia, serif',
+      step: 4,
+      maxPoints: Math.min(400, typoMax)
+    });
 
     this._ensureStageElement();
   },
@@ -273,12 +315,26 @@ export const grandFinaleAnimation = {
     const rhythm = finaleAudioSync.getIntensity(t);
     const beat = RM ? 0 : finaleAudioSync.getBeatPulse(t);
 
-    // 1. Continuous Sky Backdrop
-    const sky = x.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, lerpRgbStr(a.curCols[0], a.curCols[0], 1));
-    sky.addColorStop(0.56, lerpRgbStr(a.curCols[1], a.curCols[1], 1));
-    sky.addColorStop(1, lerpRgbStr(a.curCols[2], a.curCols[2], 1));
-    x.fillStyle = sky;
+    // 1. Continuous Sky Backdrop (cached gradient rebuilt only on visible color or height changes)
+    const c0r = Math.round(a.curCols[0][0]);
+    const c0g = Math.round(a.curCols[0][1]);
+    const c0b = Math.round(a.curCols[0][2]);
+    const c1r = Math.round(a.curCols[1][0]);
+    const c1g = Math.round(a.curCols[1][1]);
+    const c1b = Math.round(a.curCols[1][2]);
+    const c2r = Math.round(a.curCols[2][0]);
+    const c2g = Math.round(a.curCols[2][1]);
+    const c2b = Math.round(a.curCols[2][2]);
+    const skyKey = `${H}|${c0r},${c0g},${c0b}|${c1r},${c1g},${c1b}|${c2r},${c2g},${c2b}`;
+    if (!this._skyGrad || this._skyKey !== skyKey) {
+      this._skyKey = skyKey;
+      const sky = x.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, `rgb(${c0r},${c0g},${c0b})`);
+      sky.addColorStop(0.56, `rgb(${c1r},${c1g},${c1b})`);
+      sky.addColorStop(1, `rgb(${c2r},${c2g},${c2b})`);
+      this._skyGrad = sky;
+    }
+    x.fillStyle = this._skyGrad;
     x.fillRect(0, 0, W, H);
 
     // Horizon radial luminescence modulated gently by silent beat curve & dimmed under active text
@@ -297,21 +353,19 @@ export const grandFinaleAnimation = {
     // 3. Light Rays & Fireworks (behind mountains & garden depth)
     const rayAlpha = a.lightRays * textDim;
     if (rayAlpha > 0.01) {
+      const spr = getFinaleRaySpr();
+      const rayH = H * 0.85;
+      const rayW = W * 0.22;
       x.save();
       x.globalCompositeOperation = 'lighter';
+      x.globalAlpha = rayAlpha;
       for (let i = 0; i < 4; i++) {
         const bx = W * (0.2 + i * 0.2) + (RM ? 0 : Math.sin(R * 0.25 + i) * W * 0.03);
-        const rg = x.createLinearGradient(bx, 0, bx + W * 0.08, H * 0.84);
-        rg.addColorStop(0, `rgba(255,228,175,${rayAlpha})`);
-        rg.addColorStop(1, 'rgba(255,228,175,0)');
-        x.fillStyle = rg;
-        x.beginPath();
-        x.moveTo(bx - W * 0.03, 0);
-        x.lineTo(bx + W * 0.03, 0);
-        x.lineTo(bx + W * 0.16, H * 0.85);
-        x.lineTo(bx - W * 0.04, H * 0.85);
-        x.closePath();
-        x.fill();
+        x.save();
+        x.translate(bx, 0);
+        x.transform(1, 0, 0.08, 1, 0, 0);
+        x.drawImage(spr, -rayW * 0.35, 0, rayW, rayH);
+        x.restore();
       }
       x.restore();
     }
@@ -346,11 +400,15 @@ export const grandFinaleAnimation = {
     x.drawImage(CG, mistX, H * 0.64, W * 0.9, H * 0.15);
     x.restore();
 
-    // Soft garden ground slope
-    const gg = x.createLinearGradient(0, H * 0.82, 0, H);
-    gg.addColorStop(0, 'rgba(10,36,30,0.92)');
-    gg.addColorStop(1, '#030C0A');
-    x.fillStyle = gg;
+    // Soft garden ground slope (cached by viewport height)
+    if (!this._gndGrad || this._gndH !== H) {
+      this._gndH = H;
+      const gg = x.createLinearGradient(0, H * 0.82, 0, H);
+      gg.addColorStop(0, 'rgba(10,36,30,0.92)');
+      gg.addColorStop(1, '#030C0A');
+      this._gndGrad = gg;
+    }
+    x.fillStyle = this._gndGrad;
     x.fillRect(0, H * 0.84, W, H * 0.16);
 
     finaleLanterns.render(x, env);

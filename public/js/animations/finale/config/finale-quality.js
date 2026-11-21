@@ -14,26 +14,26 @@ export const FINALE_QUALITY_TIERS = {
     burstScale: 1
   },
   medium: {
-    goldDustMax: 120,
-    starsMax: 80,
-    firefliesMax: 70,
-    petalsMax: 150,
-    sparksMax: 320,
-    fireworkParticlesMax: 560,
-    confettiMax: 72,
-    typoParticlesMax: 420,
-    burstScale: 0.78
+    goldDustMax: 105,
+    starsMax: 72,
+    firefliesMax: 60,
+    petalsMax: 120,
+    sparksMax: 260,
+    fireworkParticlesMax: 420,
+    confettiMax: 60,
+    typoParticlesMax: 340,
+    burstScale: 0.72
   },
   eco: {
-    goldDustMax: 75,
-    starsMax: 55,
-    firefliesMax: 42,
-    petalsMax: 90,
-    sparksMax: 180,
-    fireworkParticlesMax: 320,
-    confettiMax: 48,
-    typoParticlesMax: 260,
-    burstScale: 0.55
+    goldDustMax: 65,
+    starsMax: 50,
+    firefliesMax: 36,
+    petalsMax: 75,
+    sparksMax: 150,
+    fireworkParticlesMax: 240,
+    confettiMax: 40,
+    typoParticlesMax: 220,
+    burstScale: 0.5
   },
   reduced: {
     goldDustMax: 40,

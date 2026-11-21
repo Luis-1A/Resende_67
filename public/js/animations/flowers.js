@@ -94,31 +94,46 @@ export const flowersAnimation = {
       }
 
       if (b > 0) {
+        const hx = fx + sw;
+        const hy = by - h;
+        const rxOut = r * 0.52 * b;
+        const ryOut = r * 0.29 * b;
         x.fillStyle = cols[f.c % cols.length];
+        x.beginPath();
         for (let i = 0; i < 6; i++) {
           const a = i * 1.047 + f.p;
-          x.beginPath();
-          x.ellipse(fx + sw + Math.cos(a) * r * .58 * b, by - h + Math.sin(a) * r * .58 * b, r * .52 * b, r * .29 * b, a, 0, TAU);
-          x.fill();
+          const ca = Math.cos(a), sa = Math.sin(a);
+          const cxp = hx + ca * r * 0.58 * b;
+          const cyp = hy + sa * r * 0.58 * b;
+          x.moveTo(cxp + ca * rxOut, cyp + sa * rxOut);
+          x.ellipse(cxp, cyp, rxOut, ryOut, a, 0, TAU);
         }
-        x.globalAlpha = .35;
+        x.fill();
+
+        const rxIn = r * 0.3 * b;
+        const ryIn = r * 0.16 * b;
+        x.globalAlpha = 0.35;
         x.fillStyle = '#FFF9EC';
+        x.beginPath();
         for (let i = 0; i < 6; i++) {
-          const a = i * 1.047 + f.p + .52;
-          x.beginPath();
-          x.ellipse(fx + sw + Math.cos(a) * r * .34 * b, by - h + Math.sin(a) * r * .34 * b, r * .3 * b, r * .16 * b, a, 0, TAU);
-          x.fill();
+          const a = i * 1.047 + f.p + 0.52;
+          const ca = Math.cos(a), sa = Math.sin(a);
+          const cxp = hx + ca * r * 0.34 * b;
+          const cyp = hy + sa * r * 0.34 * b;
+          x.moveTo(cxp + ca * rxIn, cyp + sa * rxIn);
+          x.ellipse(cxp, cyp, rxIn, ryIn, a, 0, TAU);
         }
+        x.fill();
         x.globalAlpha = 1;
         x.fillStyle = '#FFE08A';
-        x.beginPath(); x.arc(fx + sw, by - h, r * .26 * b, 0, TAU); x.fill();
+        x.beginPath(); x.arc(hx, hy, r * 0.26 * b, 0, TAU); x.fill();
         x.fillStyle = '#FFF8DC';
-        x.beginPath(); x.arc(fx + sw, by - h, r * .12 * b, 0, TAU); x.fill();
+        x.beginPath(); x.arc(hx, hy, r * 0.12 * b, 0, TAU); x.fill();
       }
 
       if (this._params.bloomGlow && b > 0 && b < 1) {
         x.globalCompositeOperation = 'lighter';
-        glow(x, fx + sw, by - h, r * 2.9, .45 * (1 - b));
+        glow(x, fx + sw, by - h, r * 2.9, 0.45 * (1 - b));
         x.globalCompositeOperation = 'source-over';
         x.globalAlpha = 1;
       }

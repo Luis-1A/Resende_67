@@ -13,9 +13,9 @@
   --dyn-text-shadow-shine:
     0 1px 3px rgba(var(--dyn-shadow-rgb), 0.98),
     0 3px 10px rgba(var(--dyn-shadow-rgb), 0.92),
-    0 0 14px rgba(255, 240, 188, 0.85),
-    0 0 30px rgba(var(--dyn-glow-rgb), 0.62),
-    0 0 calc(52px * var(--dyn-shadow-spread)) rgba(255, 198, 92, 0.36);
+    0 0 12px rgba(255, 240, 188, 0.88),
+    0 0 24px rgba(var(--dyn-glow-rgb), 0.66),
+    0 0 calc(32px * var(--dyn-shadow-spread)) rgba(255, 198, 92, 0.36);
 }
 
 :root[data-canvas-tone="deep"] {
@@ -104,6 +104,7 @@
 }
 
 .b.big.on {
+  will-change: transform, opacity;
   animation: birthdayRadiance 3.4s ease-in-out infinite;
 }
 
@@ -147,15 +148,12 @@
 
 @keyframes birthdayRadiance {
   0%, 100% {
-    text-shadow: var(--dyn-text-shadow-shine);
+    opacity: 0.95;
+    transform: translateZ(0) scale(1);
   }
   50% {
-    text-shadow:
-      0 1px 3px rgba(var(--dyn-shadow-rgb), 0.98),
-      0 3px 12px rgba(var(--dyn-shadow-rgb), 0.92),
-      0 0 22px rgba(255, 244, 200, 0.96),
-      0 0 44px rgba(var(--dyn-glow-rgb), 0.8),
-      0 0 calc(72px * var(--dyn-shadow-spread)) rgba(255, 198, 92, 0.5);
+    opacity: 1;
+    transform: translateZ(0) scale(1.02);
   }
 }
 

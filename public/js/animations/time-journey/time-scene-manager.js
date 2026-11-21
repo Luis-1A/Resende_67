@@ -4,13 +4,13 @@ import { ParticleEngine } from './particle-engine.js';
 import { starAnimation } from './star-animation.js';
 import { flowerAnimation } from './flower-animation.js';
 import { timelineAnimation } from './timeline-animation.js';
-import { numberAnimation } from './number-animation.js';
+import { numberAnimation, sampleNumberTargets } from './number-animation.js';
 import { gardenAnimation } from './garden-animation.js';
 import { butterflyAnimation } from './butterfly-animation.js';
 import { cameraAnimation } from './camera-animation.js';
 import { transitionAnimation } from './transition-animation.js';
 
-export const TIME_JOURNEY_DURATION = 55;
+export const TIME_JOURNEY_DURATION = 61.25;
 export const TIME_JOURNEY_SPEED = 1.25;
 
 export const timeSceneManager = {
@@ -54,7 +54,11 @@ export const timeSceneManager = {
     starAnimation.init(lowPower ? 65 : 105);
     flowerAnimation.init();
     timelineAnimation.init();
-    numberAnimation.init(lowPower ? 140 : 220);
+    const maxNumPts = lowPower ? 140 : 220;
+    numberAnimation.init(maxNumPts);
+    for (let i = 0; i < this._age.timelineYears.length; i++) {
+      sampleNumberTargets(String(this._age.timelineYears[i]), { maxPoints: maxNumPts });
+    }
     gardenAnimation.init();
     butterflyAnimation.init();
     cameraAnimation.init();
@@ -113,9 +117,9 @@ export const timeSceneManager = {
     // Continuous subtle ambient depth dust (separate decorative budget)
     // ------------------------------------------------------------------------
     this._ambientTimer += safeDt;
-    if (this._ambientTimer >= (this._engine.lowPower ? 0.22 : 0.11) && t < 51) {
+    if (this._ambientTimer >= (this._engine.lowPower ? 0.22 : 0.11) && t < 57.25) {
       this._ambientTimer = 0;
-      const dawnQuiet = t > 32 && t < 40 ? 0.45 : 1;
+      const dawnQuiet = t > 38.25 && t < 46.25 ? 0.45 : 1;
       if (rnd() < dawnQuiet) {
         this._engine.spawn(rnd() < 0.55 ? 'luminousDust' : 'ambient', {
           sceneId: 'ambient',
@@ -261,7 +265,7 @@ export const timeSceneManager = {
       gardenAnimation.setGardenGrowth(0.08);
     }
 
-    if (t >= 11.9 && !this._cues.has('birthDateHtml')) {
+    if (t >= 11.2 && !this._cues.has('birthDateHtml')) {
       this._cues.add('birthDateHtml');
       this._showHtml(`
         <div class="tj-date-outline vis">22 DE NOVEMBRO · 2008</div>
@@ -270,27 +274,27 @@ export const timeSceneManager = {
     }
 
     // ------------------------------------------------------------------------
-    // PHASE 3 (14 - 25s): A PASSAGEM DOS ANOS
+    // PHASE 3 (16.2 - 31.25s): A PASSAGEM DOS ANOS (+5s reais no nascimento/anos)
     // ------------------------------------------------------------------------
-    if (t >= 14.0 && !this._cues.has('flowerDissolve')) {
+    if (t >= 16.2 && !this._cues.has('flowerDissolve')) {
       this._cues.add('flowerDissolve');
       this._clearHtml();
       flowerAnimation.startDissolveToTimeline(this._engine);
       timelineAnimation.activateLine();
     }
 
-    if (t >= 14.5 && t < 25.0) {
-      const buildK = cl((t - 14.5) / 2.2);
-      const energy = cl(0.75 + (t - 15) / 14);
+    if (t >= 16.7 && t < 31.25) {
+      const buildK = cl((t - 16.7) / 2.4);
+      const energy = cl(0.75 + (t - 17.2) / 14);
       timelineAnimation.setLineBuild(buildK, energy);
     }
 
-    if (t >= 15.8 && t < 24.4) {
+    if (t >= 18.0 && t < 30.65) {
       const years = this._age.timelineYears;
       const totalY = years.length;
-      const norm = cl((t - 15.8) / 8.3);
-      // Accelerating time curve (starts leisurely ~1s, speeds smoothly toward current year)
-      const accelNorm = Math.pow(norm, 1.38);
+      const norm = cl((t - 18.0) / 12.15);
+      // Gentle unhurried curve across every year from birth year to present
+      const accelNorm = Math.pow(norm, 1.15);
       const yIdx = Math.min(totalY - 1, Math.floor(accelNorm * totalY));
       if (yIdx !== this._lastYearIdx) {
         this._lastYearIdx = yIdx;
@@ -301,22 +305,22 @@ export const timeSceneManager = {
       }
     }
 
-    if (t >= 24.4 && t < 25.1) {
-      const pulseK = cl((t - 24.4) / 0.6);
+    if (t >= 30.65 && t < 31.35) {
+      const pulseK = cl((t - 30.65) / 0.6);
       numberAnimation.setYear(this._age.currentYear, { scale: L(1, 1.12, Math.sin(pulseK * Math.PI)), alpha: 1 - pulseK * 0.85 });
     }
 
     // ------------------------------------------------------------------------
-    // PHASE 4 (25 - 32s): A PASSAGEM DOS MESES
+    // PHASE 4 (31.25 - 38.25s): A PASSAGEM DOS MESES
     // ------------------------------------------------------------------------
-    if (t >= 25.0 && !this._cues.has('monthsRing')) {
+    if (t >= 31.25 && !this._cues.has('monthsRing')) {
       this._cues.add('monthsRing');
       numberAnimation.hide();
       timelineAnimation.transitionLineToCircle(this._engine);
     }
 
-    if (t >= 25.0 && t < 32.0) {
-      const localM = t - 25.0;
+    if (t >= 31.25 && t < 38.25) {
+      const localM = t - 31.25;
       const ringProg = cl(localM / 1.6);
       const detachK = localM > 5.8 ? cl((localM - 5.8) / 1.2) : 0;
       const seq = this._age.elapsedMonthSequence;
@@ -346,21 +350,21 @@ export const timeSceneManager = {
     }
 
     // ------------------------------------------------------------------------
-    // PHASE 5 (32 - 39s): A PASSAGEM DOS DIAS + AMANHECER DO CÉU
+    // PHASE 5 (38.25 - 45.25s): A PASSAGEM DOS DIAS + AMANHECER DO CÉU
     // ------------------------------------------------------------------------
-    if (t >= 32.0 && !this._cues.has('daysStart')) {
+    if (t >= 38.25 && !this._cues.has('daysStart')) {
       this._cues.add('daysStart');
       timelineAnimation.hideAll();
       numberAnimation.startDaysCounter(0);
       this._showHtml('<div class="tj-kicker vis">DIAS QUE FORMARAM SUA HISTÓRIA</div>', 'pos-upper');
     }
 
-    const skyBri = t >= 32.0 ? cl((t - 32.0) / 12.0) : 0;
-    const rayAmt = t >= 33.5 ? cl((t - 33.5) / 7.5) * 0.72 : 0;
+    const skyBri = t >= 38.25 ? cl((t - 38.25) / 12.0) : 0;
+    const rayAmt = t >= 39.75 ? cl((t - 39.75) / 7.5) * 0.72 : 0;
     gardenAnimation.setDawn(skyBri, rayAmt);
 
-    if (t >= 32.0 && t < 38.7) {
-      const dk = cl((t - 32.0) / 6.4);
+    if (t >= 38.25 && t < 44.95) {
+      const dk = cl((t - 38.25) / 6.4);
       const targetDays = Math.max(1, this._age.days);
       const val = Math.min(this._age.days, Math.round(ez(dk) * targetDays));
       if (val !== this._lastDayVal || dk === 0) {
@@ -369,16 +373,16 @@ export const timeSceneManager = {
       }
     }
 
-    if (t >= 38.7 && !this._cues.has('daysStop')) {
+    if (t >= 44.95 && !this._cues.has('daysStop')) {
       this._cues.add('daysStop');
       numberAnimation.setDayValue(this._age.days, null);
       this._clearHtml();
     }
 
     // ------------------------------------------------------------------------
-    // PHASE 6 (39 - 47s): A CHEGADA AO PRESENTE + JARDIM + BORBOLETAS
+    // PHASE 6 (45.25 - 53.25s): A CHEGADA AO PRESENTE + JARDIM + BORBOLETAS
     // ------------------------------------------------------------------------
-    if (t >= 39.3 && !this._cues.has('presentStar')) {
+    if (t >= 45.55 && !this._cues.has('presentStar')) {
       this._cues.add('presentStar');
       // Converge distant particles into central star (farther ones earlier)
       for (let i = 0; i < 24; i++) {
@@ -437,12 +441,12 @@ export const timeSceneManager = {
       });
     }
 
-    if (t >= 39.5 && t < 47.0) {
-      gardenAnimation.setGardenGrowth(cl((t - 39.5) / 4.2));
-      starAnimation.setStarState({ alpha: cl(1 - (t - 44.5) / 2.2) * 0.92 });
+    if (t >= 45.75 && t < 53.25) {
+      gardenAnimation.setGardenGrowth(cl((t - 45.75) / 4.2));
+      starAnimation.setStarState({ alpha: cl(1 - (t - 50.75) / 2.2) * 0.92 });
     }
 
-    if (t >= 41.2 && !this._cues.has('presentStatsHtml')) {
+    if (t >= 47.45 && !this._cues.has('presentStatsHtml')) {
       this._cues.add('presentStatsHtml');
       numberAnimation.hide();
       const { years, months, days, currentLabel, elapsedSummary } = this._age;
@@ -467,38 +471,38 @@ export const timeSceneManager = {
       `, 'pos-center-high');
     }
 
-    if (t >= 45.2 && !this._cues.has('notOverText')) {
+    if (t >= 51.45 && !this._cues.has('notOverText')) {
       this._cues.add('notOverText');
       this._showHtml('<div class="tj-line vis">E a história ainda está longe de terminar.</div>', 'pos-center-high');
     }
 
     // ------------------------------------------------------------------------
-    // PHASE 7 (47 - 55s): CAMINHO DOURADO, CÂMERA E PORTAL PARA O GRANDE ENCERRAMENTO
+    // PHASE 7 (53.25 - 61.25s): CAMINHO DOURADO, CÂMERA E PORTAL PARA O GRANDE ENCERRAMENTO
     // ------------------------------------------------------------------------
-    if (t >= 47.0 && !this._cues.has('pathStart')) {
+    if (t >= 53.25 && !this._cues.has('pathStart')) {
       this._cues.add('pathStart');
       this._clearHtml();
       numberAnimation.dissolveToPath(this._engine);
       butterflyAnimation.spawn({ p0: { x: 0.08, y: 0.72 }, p1: { x: 0.42, y: 0.56 }, p2: { x: 0.88, y: 0.42 }, duration: 6.0, z: 1.25 });
     }
 
-    if (t >= 47.4) {
-      const pathK = cl((t - 47.4) / 2.4);
+    if (t >= 53.65) {
+      const pathK = cl((t - 53.65) / 2.4);
       gardenAnimation.setPathState(pathK, 1);
     }
 
-    if (t >= 48.5) {
-      cameraAnimation.setAdvance(cl((t - 48.5) / 5.4));
+    if (t >= 54.75) {
+      cameraAnimation.setAdvance(cl((t - 54.75) / 5.4));
     }
 
-    if (t >= 51.0 && !this._cues.has('chapterHtml')) {
+    if (t >= 57.25 && !this._cues.has('chapterHtml')) {
       this._cues.add('chapterHtml');
       this._showHtml('<div class="tj-chapter vis">Hoje celebramos mais um capítulo da sua história.</div>', 'pos-center');
     }
 
-    if (t >= 51.4) {
-      const portalOpen = cl((t - 51.4) / 2.8);
-      const bloomFill = cl((t - 53.6) / 1.4);
+    if (t >= 57.65) {
+      const portalOpen = cl((t - 57.65) / 2.8);
+      const bloomFill = cl((t - 59.85) / 1.4);
       transitionAnimation.setPortalState(portalOpen, bloomFill);
 
       // Gentle portal edge sparks
@@ -530,13 +534,13 @@ export const timeSceneManager = {
     starAnimation.update(safeDt, {
       engine: this._engine,
       emitTrail: emitStarTrail,
-      starSpeedScale: t >= 15.8 && t < 25 ? 3.5 : 1,
+      starSpeedScale: t >= 18.0 && t < 31.25 ? 3.0 : 1,
       skyBrightness: skyBri
     });
     flowerAnimation.update(safeDt, this._engine);
     timelineAnimation.update(safeDt, this._engine);
     numberAnimation.update(safeDt, {
-      morphSpeed: t >= 15.8 ? L(1.4, 3.6, cl((t - 15.8) / 8.5)) : 2.0,
+      morphSpeed: t >= 18.0 ? L(1.15, 2.8, cl((t - 18.0) / 12.15)) : 2.0,
       scrollSpeed: 5.2
     });
     butterflyAnimation.update(safeDt, t);

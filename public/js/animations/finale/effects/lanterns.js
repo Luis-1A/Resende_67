@@ -1,4 +1,19 @@
-import { cl, rnd, glow, rr, G, TAU } from '../../../utils.js';
+import { cl, rnd, glow, mkSpr, rr, G, TAU } from '../../../utils.js';
+
+let _lanternSpr = null;
+function getLanternSprite() {
+  if (_lanternSpr) return _lanternSpr;
+  _lanternSpr = mkSpr(48, 64, c => {
+    const g = c.createLinearGradient(24, 4, 24, 60);
+    g.addColorStop(0, '#FFB86B');
+    g.addColorStop(0.55, '#FFE0A3');
+    g.addColorStop(1, '#FFF6DA');
+    c.fillStyle = g;
+    rr(c, 4, 4, 40, 56, 9);
+    c.fill();
+  });
+  return _lanternSpr;
+}
 
 export const finaleLanterns = {
   _list: [],
@@ -49,29 +64,35 @@ export const finaleLanterns = {
   },
 
   render(x, env) {
+    if (!this._list.length) return;
     const { W, H, u, R } = env;
-    for (const l of this._list) {
+    const spr = getLanternSprite();
+
+    // Pass 1: batched additive halos
+    x.save();
+    x.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < this._list.length; i++) {
+      const l = this._list[i];
+      if (l.alpha <= 0.01) continue;
+      const w = 13 * u * l.scale;
+      const flicker = 0.88 + 0.12 * Math.sin(R * 7 + l.phase);
+      glow(x, l.nx * W, l.ny * H, w * 1.9, l.alpha * 0.38 * flicker, G);
+    }
+    x.restore();
+
+    // Pass 2: batched lantern sprites
+    x.save();
+    for (let i = 0; i < this._list.length; i++) {
+      const l = this._list[i];
       if (l.alpha <= 0.01) continue;
       const px = l.nx * W;
       const py = l.ny * H;
-      const w = 13 * u * l.scale;
-      const h = 18 * u * l.scale;
-      const flicker = 0.88 + 0.12 * Math.sin(R * 7 + l.phase);
-
-      x.save();
-      x.globalCompositeOperation = 'lighter';
-      glow(x, px, py, w * 1.9, l.alpha * 0.38 * flicker, G);
-      x.globalCompositeOperation = 'source-over';
+      const w = 15.6 * u * l.scale;
+      const h = 21.6 * u * l.scale;
       x.globalAlpha = l.alpha;
-      const g = x.createLinearGradient(px, py - h * 0.5, px, py + h * 0.5);
-      g.addColorStop(0, '#FFB86B');
-      g.addColorStop(0.55, '#FFE0A3');
-      g.addColorStop(1, '#FFF6DA');
-      x.fillStyle = g;
-      rr(x, px - w * 0.5, py - h * 0.5, w, h, w * 0.22);
-      x.fill();
-      x.restore();
+      x.drawImage(spr, px - w * 0.5, py - h * 0.5, w, h);
     }
+    x.restore();
     x.globalAlpha = 1;
   }
 };

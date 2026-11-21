@@ -93,6 +93,20 @@ export const canvasManager = {
     }
   },
 
+  async preloadScene({ effects = [], visualScene = null } = {}) {
+    const tasks = [];
+    for (const item of effects) {
+      const name = typeof item === 'string' ? item : item.name;
+      const cfg = effectsSettings[name];
+      if (!cfg || cfg.enabled === false) continue;
+      tasks.push(this._loadEffect(name).catch(() => {}));
+    }
+    if (visualScene) {
+      tasks.push(this._loadVisualScene(visualScene).catch(() => {}));
+    }
+    await Promise.all(tasks);
+  },
+
   getActiveEffects() {
     return this._activeEffects;
   },

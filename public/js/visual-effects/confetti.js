@@ -45,17 +45,22 @@ export const confettiEffect = {
 
   render(x, env, params = {}) {
     const pool = particleSystem.getPool('confetti', 160);
+    if (!pool.active.length) return;
+    x.save();
     x.globalCompositeOperation = 'source-over';
-    for (const p of pool.active) {
+    x.globalAlpha = 0.88;
+    const spin3D = params.spin3D !== false;
+    for (let i = 0; i < pool.active.length; i++) {
+      const p = pool.active[i];
+      const h = spin3D ? p.h * Math.cos(p.r * 1.7) : p.h;
       x.save();
-      x.globalAlpha = 0.88;
       x.translate(p.x, p.y);
       x.rotate(p.r);
-      if (params.spin3D !== false) x.scale(1, Math.cos(p.r * 1.7));
       x.fillStyle = p.c;
-      x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      x.fillRect(-p.w * 0.5, -h * 0.5, p.w, h);
       x.restore();
     }
+    x.restore();
     x.globalAlpha = 1;
   },
 

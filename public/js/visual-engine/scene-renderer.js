@@ -5,8 +5,11 @@ import { transitionSystem } from './transition-system.js';
 import { visualSettings } from '../config/visual-settings.js';
 
 export const sceneRenderer = {
+  _worldAnims: [],
+  _screenAnims: [],
+
   render(x, env, visualEffects, animationManager) {
-    const { BACKGROUND, DISTANCE, ATMOSPHERE, MIDGROUND, FOREGROUND } = visualSettings.layers;
+    const { DISTANCE, ATMOSPHERE, MIDGROUND, FOREGROUND } = visualSettings.layers;
 
     // Layer 1: Background (Sky gradients + ambient glow)
     atmosphereSystem.renderSkyAndClouds(x, env);
@@ -21,6 +24,20 @@ export const sceneRenderer = {
           try { entry.mod.renderBackdrop(x, env); } catch (e) {}
         }
       }
+    }
+
+    const worldAnims = this._worldAnims;
+    const screenAnims = this._screenAnims;
+    worldAnims.length = 0;
+    screenAnims.length = 0;
+    if (animationManager) {
+      for (const [, entry] of animationManager._active.entries()) {
+        if (entry.failed || typeof entry.mod.render !== 'function') continue;
+        if (entry.mod.worldSpace === false) screenAnims.push(entry);
+        else worldAnims.push(entry);
+      }
+      if (worldAnims.length > 1) worldAnims.sort((a, b) => (a.mod.layer ?? 5) - (b.mod.layer ?? 5));
+      if (screenAnims.length > 1) screenAnims.sort((a, b) => (a.mod.layer ?? 5) - (b.mod.layer ?? 5));
     }
 
     // World space with gentle cinematic depth zoom in early narrative scenes
@@ -38,24 +55,14 @@ export const sceneRenderer = {
 
     // Layer 4: Midground (Lanterns, flowers, balloons, butterflies, narrative scene objects)
     this._renderEffectBucket(x, env, visualEffects, MIDGROUND);
-    if (animationManager) {
-      const worldAnims = [...animationManager._active.entries()]
-        .filter(([, e]) => !e.failed && e.mod.worldSpace !== false && typeof e.mod.render === 'function')
-        .sort((a, b) => (a[1].mod.layer ?? 5) - (b[1].mod.layer ?? 5));
-      for (const [, entry] of worldAnims) {
-        try { entry.mod.render(x, env); } catch (e) {}
-      }
+    for (let i = 0; i < worldAnims.length; i++) {
+      try { worldAnims[i].mod.render(x, env); } catch (e) {}
     }
     x.restore();
 
     // Screen-space midground/foreground animations + Layer 5 Foreground effects (petals, dust, confetti, fireworks)
-    if (animationManager) {
-      const screenAnims = [...animationManager._active.entries()]
-        .filter(([, e]) => !e.failed && e.mod.worldSpace === false && typeof e.mod.render === 'function')
-        .sort((a, b) => (a[1].mod.layer ?? 5) - (b[1].mod.layer ?? 5));
-      for (const [, entry] of screenAnims) {
-        try { entry.mod.render(x, env); } catch (e) {}
-      }
+    for (let i = 0; i < screenAnims.length; i++) {
+      try { screenAnims[i].mod.render(x, env); } catch (e) {}
     }
     this._renderEffectBucket(x, env, visualEffects, FOREGROUND);
 

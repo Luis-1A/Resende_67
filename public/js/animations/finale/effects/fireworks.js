@@ -173,7 +173,9 @@ export const finaleFireworks = {
     if (this._sparks.active.length) {
       x.save();
       x.globalCompositeOperation = 'lighter';
-      for (const p of this._sparks.active) {
+      const arr = this._sparks.active;
+      for (let i = 0; i < arr.length; i++) {
+        const p = arr[i];
         const k = p.life / p.maxLife;
         const earlyBright = k < 0.2 ? 1.2 : 1;
         const fadeOut = k > 0.75 ? cl((1 - k) / 0.25) : 1;
@@ -182,10 +184,11 @@ export const finaleFireworks = {
 
         const px = p.nx * W;
         const py = p.ny * H;
+        const rad = p.sz * u;
         if (p.trail) {
           x.strokeStyle = p.color;
           x.globalAlpha = a * 0.65;
-          x.lineWidth = p.sz * 0.75 * u;
+          x.lineWidth = rad * 0.75;
           x.beginPath();
           x.moveTo(p.px * W, p.py * H);
           x.lineTo(px, py);
@@ -193,11 +196,15 @@ export const finaleFireworks = {
         }
         x.globalAlpha = a;
         x.fillStyle = p.color;
-        x.beginPath();
-        x.arc(px, py, p.sz * u, 0, TAU);
-        x.fill();
-        if (k < 0.35) {
-          glow(x, px, py, p.sz * 2.8 * u, a * 0.45);
+        if (rad < 2.2) {
+          x.fillRect(px - rad, py - rad, rad * 2, rad * 2);
+        } else {
+          x.beginPath();
+          x.arc(px, py, rad, 0, TAU);
+          x.fill();
+        }
+        if (k < 0.25 && (i & 1) === 0) {
+          glow(x, px, py, rad * 2.8, a * 0.42);
         }
       }
       x.restore();

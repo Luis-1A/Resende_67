@@ -1,6 +1,34 @@
-import { cl, rnd, TAU } from '../../../utils.js';
+import { cl, rnd, mkSpr, TAU } from '../../../utils.js';
 
 const BALLOON_COLS = ['#FF9EC4', '#FFD36E', '#9ED1FF', '#C8A6FF', '#FFBC8A'];
+const _balloonSprites = new Map();
+
+function getBalloonSprite(color) {
+  if (_balloonSprites.has(color)) return _balloonSprites.get(color);
+  const spr = mkSpr(64, 80, c => {
+    const cx = 32;
+    const cy = 36;
+    const r = 24;
+    const bg = c.createRadialGradient(cx - r * 0.28, cy - r * 0.35, r * 0.1, cx, cy, r * 1.2);
+    bg.addColorStop(0, '#FFFFFF');
+    bg.addColorStop(0.28, color);
+    bg.addColorStop(1, color);
+    c.fillStyle = bg;
+    c.beginPath();
+    c.ellipse(cx, cy, r * 0.88, r * 1.12, 0, 0, TAU);
+    c.fill();
+
+    // Knot
+    c.beginPath();
+    c.moveTo(cx - 4, cy + r * 1.12);
+    c.lineTo(cx + 4, cy + r * 1.12);
+    c.lineTo(cx, cy + r * 1.26);
+    c.closePath();
+    c.fill();
+  });
+  _balloonSprites.set(color, spr);
+  return spr;
+}
 
 export const finaleBalloons = {
   _balloons: [],
@@ -57,9 +85,11 @@ export const finaleBalloons = {
   },
 
   render(x, env) {
+    if (!this._balloons.length) return;
     const { W, H, u, R } = env;
 
-    for (const b of this._balloons) {
+    for (let i = 0; i < this._balloons.length; i++) {
+      const b = this._balloons[i];
       const lifeP = b.life / b.maxLife;
       const fadeIn = cl(b.life / 0.9);
       const fadeOut = lifeP > 0.82 ? cl((1 - lifeP) / 0.18) : 1;
@@ -69,6 +99,10 @@ export const finaleBalloons = {
       const px = b.nx * W;
       const py = b.ny * H;
       const r = 18 * u * b.scale;
+      const spr = getBalloonSprite(b.color);
+      const sprScale = r / 24;
+      const drawW = 64 * sprScale;
+      const drawH = 80 * sprScale;
 
       x.save();
       x.translate(px, py);
@@ -84,23 +118,8 @@ export const finaleBalloons = {
       x.quadraticCurveTo(tailBend, r * 2.2, -tailBend * 0.6, r * 3.4);
       x.stroke();
 
-      // Balloon body
-      const bg = x.createRadialGradient(-r * 0.28, -r * 0.35, r * 0.1, 0, 0, r * 1.2);
-      bg.addColorStop(0, '#FFFFFF');
-      bg.addColorStop(0.28, b.color);
-      bg.addColorStop(1, b.color);
-      x.fillStyle = bg;
-      x.beginPath();
-      x.ellipse(0, 0, r * 0.88, r * 1.12, 0, 0, TAU);
-      x.fill();
-
-      // Knot
-      x.beginPath();
-      x.moveTo(-3 * u, r * 1.12);
-      x.lineTo(3 * u, r * 1.12);
-      x.lineTo(0, r * 1.24);
-      x.closePath();
-      x.fill();
+      // Pre-baked radial-shaded balloon sprite
+      x.drawImage(spr, -32 * sprScale, -36 * sprScale, drawW, drawH);
 
       x.restore();
     }

@@ -81,7 +81,14 @@ export const sceneManager = {
 
     const nextCfg = scenesConfig[index + 1];
     if (nextCfg) {
-      this._getSceneModule(index + 1).catch(() => {});
+      this._getSceneModule(index + 1).then(nextDef => {
+        if (!nextDef) return;
+        const nextAnims = typeof nextDef.getAnimations === 'function' ? nextDef.getAnimations() : [];
+        const animNames = nextAnims.map(req => (typeof req === 'string' ? req : req.name)).filter(Boolean);
+        if (animNames.length) animationManager.preload(animNames).catch(() => {});
+        const nextVisual = typeof nextDef.getVisualConfig === 'function' ? nextDef.getVisualConfig() : null;
+        if (nextVisual) canvasManager.preloadScene(nextVisual).catch(() => {});
+      }).catch(() => {});
     }
   },
 

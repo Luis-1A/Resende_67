@@ -89,8 +89,8 @@ export function getNumber18Points() {
   c.fillText('18', 170, 118);
   const d = c.getImageData(0, 0, 340, 220).data;
   const q = [];
-  for (let j = 0; j < 220; j += 5) {
-    for (let i = 0; i < 340; i += 5) {
+  for (let j = 0; j < 220; j += 6) {
+    for (let i = 0; i < 340; i += 6) {
       if (d[(j * 340 + i) * 4 + 3] > 128) q.push([(i - 170) / 100, (j - 110) / 100, i < 155]);
     }
   }

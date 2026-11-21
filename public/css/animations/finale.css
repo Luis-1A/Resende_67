@@ -126,12 +126,14 @@
 .finale-line.grand-kicker.vis,
 .finale-line.grand-title.vis,
 .finale-line.hero-name.vis {
+  will-change: transform, opacity;
   animation: birthdayRadiance 3.2s ease-in-out infinite;
 }
 
 .finale-line.grand-name.vis {
   transform: scale(1);
-  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
+  will-change: transform, opacity;
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
   animation: birthdayRadiance 2.8s ease-in-out infinite;
 }
 
@@ -146,6 +148,7 @@
 }
 
 .finale-line.closing-birthday.vis {
+  will-change: transform, opacity;
   animation: birthdayRadiance 3.2s ease-in-out infinite;
 }
 

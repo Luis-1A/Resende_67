@@ -46,6 +46,8 @@ export const numberAnimation = {
   _dayAlpha: 0,
   _maxPoints: 220,
   _sparkCooldown: 0,
+  _colGrad: null,
+  _colGradKey: '',
 
   init(maxPoints = 220) {
     this._mode = 'hidden';
@@ -61,6 +63,8 @@ export const numberAnimation = {
     this._dayAlpha = 0;
     this._maxPoints = maxPoints;
     this._sparkCooldown = 0;
+    this._colGrad = null;
+    this._colGradKey = '';
   },
 
   setYear(year, { scale = 1, alpha = 1 } = {}) {
@@ -218,12 +222,17 @@ export const numberAnimation = {
       const numSize = Math.round(Math.min(W * 0.22, 92));
 
       x.save();
-      // Subtle vertical illuminated column behind scrolling day counter
-      const colGrad = x.createLinearGradient(cx, cy - colH * 0.65, cx, cy + colH * 0.65);
-      colGrad.addColorStop(0, 'rgba(255,226,154,0)');
-      colGrad.addColorStop(0.5, `rgba(255,226,154,${0.16 * this._dayAlpha})`);
-      colGrad.addColorStop(1, 'rgba(255,226,154,0)');
-      x.fillStyle = colGrad;
+      const gradKey = `${cx.toFixed(0)}|${cy.toFixed(0)}|${colH.toFixed(0)}`;
+      if (!this._colGrad || this._colGradKey !== gradKey) {
+        this._colGradKey = gradKey;
+        const cg = x.createLinearGradient(cx, cy - colH * 0.65, cx, cy + colH * 0.65);
+        cg.addColorStop(0, 'rgba(255,226,154,0)');
+        cg.addColorStop(0.5, 'rgba(255,226,154,0.16)');
+        cg.addColorStop(1, 'rgba(255,226,154,0)');
+        this._colGrad = cg;
+      }
+      x.globalAlpha = this._dayAlpha;
+      x.fillStyle = this._colGrad;
       x.fillRect(cx - numSize * 0.85, cy - colH * 0.65, numSize * 1.7, colH * 1.3);
 
       // Clip mask so numbers enter from bottom and exit through top cleanly
@@ -238,13 +247,14 @@ export const numberAnimation = {
       const drawNum = (val, yOff, al) => {
         if (al <= 0.02) return;
         const str = String(val).padStart(2, '0');
-        x.save();
-        x.globalAlpha = al * this._dayAlpha;
-        x.shadowColor = 'rgba(255,224,142,0.85)';
-        x.shadowBlur = 18 * u;
+        const totalAl = al * this._dayAlpha;
+        // Cached sprite bloom behind digits instead of slow software shadowBlur
+        x.globalCompositeOperation = 'lighter';
+        glow(x, cx, cy + yOff, numSize * 0.9, totalAl * 0.44, G);
+        x.globalCompositeOperation = 'source-over';
+        x.globalAlpha = totalAl;
         x.fillStyle = '#FFFDF5';
         x.fillText(str, cx, cy + yOff);
-        x.restore();
       };
 
       if (k < 0.99 && this._prevDayValue !== this._dayValue) {

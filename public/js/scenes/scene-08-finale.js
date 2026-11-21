@@ -27,12 +27,12 @@ export default {
         { name: 'stars', params: { density: 1 } },
         { name: 'shootingStars', params: { startAt: 22.0, duration: 5.5, fromX: 0.82, toX: 0.16 } },
         { name: 'lightRays', params: { delay: 1.0, opacity: 0.11, warm: false } },
-        { name: 'fireflies', params: { count: 24, glowIntensity: 0.9 } },
+        { name: 'fireflies', params: { count: 16, glowIntensity: 0.9 } },
         { name: 'floatingLanterns', params: { count: 6 } },
         { name: 'butterflies', params: { count: 5 } },
-        { name: 'magicalDust', params: { focusY: 0.35, intensity: 0.85 } },
-        { name: 'confetti', params: { count: 120, startAt: 10 } },
-        { name: 'fireworks', params: { burstRate: 0.034, burstSize: 32, startDelay: 9, sideMode: 'wide' } },
+        { name: 'magicalDust', params: { focusY: 0.35, intensity: 0.68 } },
+        { name: 'confetti', params: { count: 68, startAt: 10 } },
+        { name: 'fireworks', params: { burstRate: 0.024, burstSize: 22, startDelay: 9, sideMode: 'wide' } },
         { name: 'petals', params: { pinkAccent: true } }
       ]
     };

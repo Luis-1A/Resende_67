@@ -36,18 +36,22 @@ export const firefliesEffect = {
   },
 
   render(x, env, params = {}) {
+    if (!this._bugs.length) return;
     const { W, H, u, R, RM } = env;
     const intensity = params.glowIntensity ?? 0.85;
+    x.save();
     x.globalCompositeOperation = 'lighter';
-    for (const b of this._bugs) {
+    x.fillStyle = '#FFF6C8';
+    for (let i = 0; i < this._bugs.length; i++) {
+      const b = this._bugs[i];
       const pulse = RM ? 0.5 : (0.18 + 0.82 * Math.max(0, Math.sin(R * b.spd + b.p)));
       const px = b.x * W, py = b.y * H;
       glow(x, px, py, b.r * 3.8 * u, pulse * 0.65 * intensity);
+      const r = b.r * 0.48 * u;
       x.globalAlpha = pulse * intensity;
-      x.fillStyle = '#FFF6C8';
-      x.beginPath(); x.arc(px, py, b.r * 0.48 * u, 0, Math.PI * 2); x.fill();
+      x.fillRect(px - r, py - r, r * 2, r * 2);
     }
-    x.globalCompositeOperation = 'source-over';
+    x.restore();
     x.globalAlpha = 1;
   },
 

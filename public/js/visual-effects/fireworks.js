@@ -6,16 +6,23 @@ import { performanceManager } from '../visual-engine/performance-manager.js';
 
 export const fireworksEffect = {
   layer: visualSettings.layers.FOREGROUND,
+  _cooldown: 0,
 
   init() {
+    this._cooldown = 0;
     particleSystem.clearPool('fireworks');
   },
 
   _burst(px, py, count, W, H) {
-    const pool = particleSystem.getPool('fireworks');
+    const pool = particleSystem.getPool('fireworks', 240);
+    const tier = performanceManager.tier;
+    const cap = tier === 'eco' ? 110 : tier === 'medium' ? 160 : 220;
+    const room = Math.max(0, cap - pool.active.length);
+    if (room < 10) return;
+
     const starShape = rnd() < 0.42;
     const c = ['255,224,130', '255,255,255', '160,210,255', '255,160,200'][rnd() * 4 | 0];
-    const scaled = performanceManager.scaleCount(count);
+    const scaled = Math.min(room, performanceManager.scaleCount(count));
     for (let i = 0; i < scaled; i++) {
       const a = rnd() * TAU;
       const v = (0.28 + rnd() * 0.72) * Math.min(W, H) * 0.42 * (starShape ? 1 + 0.45 * Math.cos(5 * a) : 1) * (rnd() < 0.4 ? 0.6 : 1);
@@ -25,9 +32,11 @@ export const fireworksEffect = {
 
   update(dt, env, params = {}) {
     const { W, H, sceneElapsed: st, tm } = env;
-    const pool = particleSystem.getPool('fireworks');
+    const pool = particleSystem.getPool('fireworks', 240);
+    this._cooldown = Math.max(0, this._cooldown - dt);
     const maxTime = params.endAfter != null ? params.endAfter : (tm[3] ? tm[3] + 20 : 999);
-    if (st > (params.startDelay ?? 12) && st < maxTime && rnd() < (params.burstRate ?? 0.016)) {
+    if (this._cooldown <= 0 && st > (params.startDelay ?? 12) && st < maxTime && rnd() < (params.burstRate ?? 0.016)) {
+      this._cooldown = 0.48;
       const bx = params.sideMode === 'wide'
         ? W * (rnd() < 0.5 ? 0.1 + rnd() * 0.22 : 0.68 + rnd() * 0.22)
         : W * (rnd() < 0.5 ? 0.15 : 0.85);
@@ -43,24 +52,34 @@ export const fireworksEffect = {
   },
 
   render(x, env) {
+    const pool = particleSystem.getPool('fireworks', 240);
+    if (!pool.active.length) return;
     const { u } = env;
-    const pool = particleSystem.getPool('fireworks');
+    x.save();
     x.globalCompositeOperation = 'lighter';
-    for (const p of pool.active) {
+    for (let i = 0; i < pool.active.length; i++) {
+      const p = pool.active[i];
       const lr = cl(p.l / p.maxL);
+      const col = 'rgb(' + p.c + ')';
       x.globalAlpha = lr * 0.7;
-      x.strokeStyle = 'rgb(' + p.c + ')';
+      x.strokeStyle = col;
       x.lineWidth = Math.max(0.5, 2 * u * lr);
-      x.beginPath(); x.moveTo(p.px, p.py); x.lineTo(p.x, p.y); x.stroke();
+      x.beginPath();
+      x.moveTo(p.px, p.py);
+      x.lineTo(p.x, p.y);
+      x.stroke();
+
+      const r = Math.max(0.6, 2.2 * u * lr);
       x.globalAlpha = lr;
-      x.fillStyle = 'rgb(' + p.c + ')';
-      x.beginPath(); x.arc(p.x, p.y, Math.max(0.4, 2.4 * u * lr), 0, TAU); x.fill();
+      x.fillStyle = col;
+      x.fillRect(p.x - r, p.y - r, r * 2, r * 2);
     }
-    x.globalCompositeOperation = 'source-over';
+    x.restore();
     x.globalAlpha = 1;
   },
 
   destroy() {
+    this._cooldown = 0;
     particleSystem.clearPool('fireworks');
   }
 };

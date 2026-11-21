@@ -26,7 +26,7 @@ export const performanceManager = {
     if (dt > 0.045) {
       this._slowFrames++;
       this._fastFrames = 0;
-      if (this._slowFrames > 35) {
+      if (this._slowFrames > 20) {
         this._slowFrames = 0;
         if (this.tier === 'high') this.tier = 'medium';
         else if (this.tier === 'medium') this.tier = 'eco';

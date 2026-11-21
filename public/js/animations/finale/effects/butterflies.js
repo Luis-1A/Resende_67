@@ -148,17 +148,21 @@ export const finaleButterflies = {
         x.save();
         x.scale(side * flap, 1);
 
-        // Upper wing
-        const wg = x.createLinearGradient(0, -s * 0.8, s * 1.15, s * 0.15);
-        wg.addColorStop(0, b.colorA);
-        wg.addColorStop(0.65, b.colorB);
-        wg.addColorStop(1, b.accent);
-        x.globalAlpha = al * 0.9;
-        x.fillStyle = wg;
+        // Upper wing (base + warm inner highlight without per-frame gradient allocation)
+        x.globalAlpha = al * 0.88;
+        x.fillStyle = b.colorB;
         x.beginPath();
         x.moveTo(0, -s * 0.08);
         x.bezierCurveTo(s * 0.45, -s * 1.1, s * 1.25, -s * 0.78, s * 1.05, -s * 0.02);
         x.bezierCurveTo(s * 0.75, s * 0.14, s * 0.3, s * 0.1, 0, s * 0.05);
+        x.closePath();
+        x.fill();
+
+        x.globalAlpha = al * 0.56;
+        x.fillStyle = b.colorA;
+        x.beginPath();
+        x.moveTo(0, -s * 0.06);
+        x.bezierCurveTo(s * 0.32, -s * 0.78, s * 0.86, -s * 0.54, s * 0.72, -s * 0.04);
         x.closePath();
         x.fill();
 
@@ -172,7 +176,7 @@ export const finaleButterflies = {
 
         // Lower wing
         x.globalAlpha = al * 0.84;
-        x.fillStyle = b.colorB;
+        x.fillStyle = b.accent || b.colorB;
         x.beginPath();
         x.moveTo(0, s * 0.05);
         x.bezierCurveTo(s * 0.65, s * 0.08, s * 0.92, s * 0.56, s * 0.48, s * 0.82);
