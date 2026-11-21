@@ -1,7 +1,8 @@
 import { scenesConfig } from './config/scenes.config.js';
 import { settings } from './config/settings.js';
-import { cl } from './utils.js';
 import { animationManager } from './animation-manager.js';
+import { canvasManager } from './visual-engine/canvas-manager.js';
+import { transitionSystem } from './visual-engine/transition-system.js';
 import { screenManager } from './screen-manager.js';
 import { audioManager } from './audio-manager.js';
 
@@ -13,7 +14,6 @@ export const sceneManager = {
   tm: [],
   endT: 0,
   shown: -1,
-  trans: null,
   exiting: null,
   fin: false,
   _sceneCache: new Map(),
@@ -51,7 +51,7 @@ export const sceneManager = {
     tx.innerHTML = '';
     (def.texts || []).forEach(a => {
       const d = document.createElement('div');
-      d.className = 'b ' + a[1];
+      d.className = 'b scene-fade-ready ' + a[1];
       d.textContent = a[0];
       tx.appendChild(d);
     });
@@ -73,10 +73,12 @@ export const sceneManager = {
 
     audioManager.playScene(index);
 
+    const visualCfg = typeof def.getVisualConfig === 'function' ? def.getVisualConfig() : {};
+    await canvasManager.configureScene(visualCfg);
+
     const anims = typeof def.getAnimations === 'function' ? def.getAnimations() : [];
     await animationManager.activateScene(anims);
 
-    // Preload next scene lazily after current scene settles
     const nextCfg = scenesConfig[index + 1];
     if (nextCfg) {
       this._getSceneModule(index + 1).catch(() => {});
@@ -84,7 +86,7 @@ export const sceneManager = {
   },
 
   requestExit() {
-    if (this.trans || this.sc < 0 || this.sc >= scenesConfig.length - 1) return;
+    if (transitionSystem.isActive() || this.sc < 0 || this.sc >= scenesConfig.length - 1) return;
     const def = this.sceneDef;
     if (def && def.exitDuration && !this.exiting) {
       this.exiting = { t: this.R, dur: def.exitDuration };
@@ -100,10 +102,16 @@ export const sceneManager = {
 
   _startTransition(targetIndex) {
     const cfg = scenesConfig[this.sc] || scenesConfig[0];
-    this.trans = { t: 0, sw: 0, to: targetIndex, c: cfg.transitionColor };
+    const type = (this.sceneDef && this.sceneDef.transitionType) || 'darkFade';
     this._dom.tx.innerHTML = '';
     this._dom.card.classList.remove('on');
     this._dom.nx.classList.remove('on');
+    transitionSystem.start({
+      type,
+      color: cfg.transitionColor,
+      duration: 2.0,
+      onMidpoint: () => this.load(targetIndex, this.R)
+    });
   },
 
   handleContinueClick() {
@@ -136,27 +144,26 @@ export const sceneManager = {
     if (this.fin) return;
     this.fin = true;
     screenManager.releaseWakeLock();
-    const d = document.createElement('div');
-    d.className = 'b mid name on';
-    d.textContent = 'ANDERSON';
-    d.style.fontSize = 'clamp(22px,6vw,40px)';
-    d.style.opacity = '.72';
-    this._dom.tx.appendChild(d);
+    const hasClosingLine = this.sc === scenesConfig.length - 1 && this._dom.tx.querySelector && this._dom.tx.querySelector('.finale-line.closing, .finale-line.closing-birthday');
+    if (!hasClosingLine) {
+      const d = document.createElement('div');
+      d.className = 'b mid name on';
+      d.textContent = 'ANDERSON';
+      d.style.fontSize = 'clamp(22px,6vw,40px)';
+      d.style.opacity = '.72';
+      this._dom.tx.appendChild(d);
+    }
   },
 
   tick(dt, R) {
     this.R = R;
     const bounds = screenManager.getBounds();
 
-    if (this.trans) {
-      this.trans.t += dt;
-      if (!this.trans.sw && this.trans.t >= 1) {
-        this.trans.sw = 1;
-        this.load(this.trans.to, R);
-      }
+    if (!transitionSystem.isActive()) {
+      this._updateUi();
     }
 
-    const env = {
+    return {
       ...bounds,
       sc: this.sc,
       R,
@@ -167,18 +174,6 @@ export const sceneManager = {
       fin: this.fin,
       RM: settings.reducedMotion
     };
-
-    animationManager.update(dt, env);
-    animationManager.render(this._dom.ctx, env);
-
-    if (this.trans) {
-      const a = this.trans.t < 1 ? this.trans.t : 2 - this.trans.t;
-      this._dom.ctx.fillStyle = `rgba(${this.trans.c},${cl(a)})`;
-      this._dom.ctx.fillRect(0, 0, bounds.W, bounds.H);
-      if (this.trans.t >= 2) this.trans = null;
-    }
-
-    if (!this.trans) this._updateUi();
   },
 
   _updateUi() {
@@ -190,7 +185,13 @@ export const sceneManager = {
         const nextIdx = this.sc + 1;
         const cfg = scenesConfig[this.sc] || scenesConfig[0];
         this.exiting = null;
-        this.trans = { t: 1, sw: 1, to: nextIdx, c: cfg.transitionColor };
+        transitionSystem.start({
+          type: def.transitionType || 'darkFade',
+          color: cfg.transitionColor,
+          duration: 2.0,
+          startT: 1.0,
+          swapped: true
+        });
         this.load(nextIdx, this.R);
       }
       return;
@@ -212,11 +213,14 @@ export const sceneManager = {
       if (!def.manualContinue && st > settings.cardContinueDelay) {
         this._dom.nx.classList.add('on');
       }
-    } else if (this.tm.length && st > this.tm[this.tm.length - 1] + 2.2) {
-      this._dom.nx.classList.add('on');
     }
 
-    if (!def.hasCard && def.autoAdvance !== false && st > this.endT && !this.trans) {
+    if (typeof def.shouldAutoAdvance === 'function' && def.shouldAutoAdvance({ animationManager, sceneElapsed: st }) && !transitionSystem.isActive()) {
+      this.requestExit();
+      return;
+    }
+
+    if (!def.hasCard && def.autoAdvance !== false && st > this.endT && !transitionSystem.isActive()) {
       this.requestExit();
     }
   }

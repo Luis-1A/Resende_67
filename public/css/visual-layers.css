@@ -1,0 +1,18 @@
+#tx {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+#st, #nt {
+  z-index: 5;
+}
+
+#card {
+  z-index: 6;
+}
+
+#nx {
+  z-index: 8;
+}

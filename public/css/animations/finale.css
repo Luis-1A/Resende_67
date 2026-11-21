@@ -1,11 +1,170 @@
-.big {
-  font-size: clamp(26px, 7.5vw, 56px);
-  font-weight: 600;
-  letter-spacing: .04em;
-  filter: blur(3px);
-  transition: opacity 1.8s, transform 1.8s, filter 2s;
+.finale-stage {
+  position: fixed;
+  left: 50%;
+  width: min(94vw, 920px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.65rem;
+  pointer-events: none;
+  z-index: 6;
+  padding: 0.75rem 1rem;
+  background: none;
 }
 
-.big.on {
-  filter: blur(0);
+.finale-stage.pos-center {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.finale-stage.pos-center-high {
+  top: 43%;
+  transform: translate(-50%, -50%);
+}
+
+.finale-stage.pos-upper {
+  top: 24%;
+  transform: translate(-50%, -50%);
+}
+
+.finale-line {
+  font-family: var(--font-editorial);
+  color: #FFFFFF;
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  transition:
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    text-shadow 0.8s ease;
+  text-shadow: var(--dyn-text-shadow-base);
+  text-wrap: balance;
+  line-height: 1.42;
+}
+
+.finale-line.vis {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.finale-line.shatter {
+  opacity: 0;
+  transform: translateY(-22px) scale(1.06);
+  transition: opacity 0.8s ease, transform 0.85s ease;
+}
+
+.finale-line.hidden {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.finale-line.poetic {
+  font-family: var(--font-editorial);
+  font-size: clamp(20px, 4.7vw, 33px);
+  font-weight: 500;
+  letter-spacing: 0.015em;
+  text-shadow: var(--dyn-text-shadow-base);
+}
+
+.finale-line.hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 9vw, 68px);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #FFFDF6;
+  text-shadow: var(--dyn-text-shadow-shine);
+}
+
+.finale-line.hero-sub {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 4.8vw, 32px);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #FFEFA8;
+  text-shadow: var(--dyn-text-shadow-display);
+}
+
+.finale-line.caption {
+  font-family: var(--font-letter);
+  font-size: clamp(16px, 3.6vw, 23px);
+  font-style: italic;
+  color: #F7F9FF;
+  text-shadow: var(--dyn-text-shadow-base);
+}
+
+.finale-line.grand-kicker {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 6.8vw, 48px);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: #FFFDF4;
+  text-shadow: var(--dyn-text-shadow-shine);
+}
+
+.finale-line.grand-title {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 8.2vw, 76px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  color: #FFFDF6;
+  text-shadow: var(--dyn-text-shadow-shine);
+}
+
+.finale-line.grand-name {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 9.2vw, 84px);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.1;
+  color: #FFEFA6;
+  text-shadow: var(--dyn-text-shadow-shine);
+  transform: scale(0.75);
+}
+
+.finale-line.grand-kicker.vis,
+.finale-line.grand-title.vis,
+.finale-line.hero-name.vis {
+  animation: birthdayRadiance 3.2s ease-in-out infinite;
+}
+
+.finale-line.grand-name.vis {
+  transform: scale(1);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
+  animation: birthdayRadiance 2.8s ease-in-out infinite;
+}
+
+.finale-line.closing-birthday {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 6.6vw, 52px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.22;
+  color: #FFFDF2;
+  text-shadow: var(--dyn-text-shadow-shine);
+}
+
+.finale-line.closing-birthday.vis {
+  animation: birthdayRadiance 3.2s ease-in-out infinite;
+}
+
+.finale-line.closing {
+  font-family: var(--font-editorial);
+  font-size: clamp(19px, 4.3vw, 29px);
+  font-style: italic;
+  color: #FFFFFF;
+  max-width: 34ch;
+  text-shadow: var(--dyn-text-shadow-base);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .finale-line,
+  .finale-line.vis,
+  .finale-line.shatter {
+    transition-duration: 0.25s;
+    filter: none;
+    transform: none;
+    animation: none;
+  }
 }

@@ -100,3 +100,62 @@ export function getNumber18Points() {
   });
   return cached18;
 }
+
+export function hexToRgb(hex) {
+  if (!hex || typeof hex !== 'string') return [10, 20, 48];
+  const clean = hex.replace('#', '');
+  const full = clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean;
+  const n = parseInt(full, 16);
+  if (Number.isNaN(n)) return [10, 20, 48];
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+let _lastDynContrastKey = '';
+export function syncDynamicTextContrast(skyRgb = [10, 20, 48], glowBoost = 0.2, explicitTone = null) {
+  if (typeof document === 'undefined' || !document.documentElement) return;
+  const root = document.documentElement;
+  if (!root.style || typeof root.style.setProperty !== 'function') return;
+
+  const r = cl(skyRgb[0] ?? 10, 0, 255);
+  const g = cl(skyRgb[1] ?? 20, 0, 255);
+  const b = cl(skyRgb[2] ?? 48, 0, 255);
+  const luma = cl((0.299 * r + 0.587 * g + 0.114 * b) / 255 + glowBoost * 0.28, 0, 1);
+
+  let tone = explicitTone;
+  if (!tone) {
+    if (r > b + 28 && r > g + 16) tone = 'sunset';
+    else if (r > g + 14 && b > g + 10) tone = 'twilight';
+    else if (r > 24 && b < 110 && glowBoost > 0.35) tone = 'warm';
+    else if (g > r + 10 && g > b * 0.72) tone = 'garden';
+    else if (glowBoost > 0.52) tone = 'climax';
+    else tone = 'deep';
+  }
+
+  let sr, sg, sb;
+  if (r > b) {
+    // Warm / sunset / rose sky -> cool deep plum-indigo contrasting shadow
+    sr = Math.round(cl(16 - b * 0.04, 4, 24));
+    sg = Math.round(cl(5, 2, 10));
+    sb = Math.round(cl(22 + (r - g) * 0.09, 14, 34));
+  } else {
+    // Cool / blue / emerald night -> warm deep obsidian-violet contrasting shadow
+    sr = Math.round(cl(6 + b * 0.03, 3, 16));
+    sg = Math.round(cl(4 + g * 0.02, 2, 12));
+    sb = Math.round(cl(16 + b * 0.04, 10, 28));
+  }
+  const ar = Math.round(cl(sr * 1.5, 4, 40));
+  const ag = Math.round(cl(sg * 1.4, 3, 24));
+  const ab = Math.round(cl(sb * 1.65, 14, 52));
+  const alpha = cl(0.93 + luma * 0.07, 0.93, 1).toFixed(2);
+  const spread = cl(0.94 + glowBoost * 0.42, 0.94, 1.38).toFixed(2);
+
+  const key = `${tone}|${sr},${sg},${sb}|${alpha}|${spread}`;
+  if (key === _lastDynContrastKey) return;
+  _lastDynContrastKey = key;
+
+  if (root.dataset) root.dataset.canvasTone = tone;
+  root.style.setProperty('--dyn-shadow-rgb', `${sr}, ${sg}, ${sb}`);
+  root.style.setProperty('--dyn-ambient-rgb', `${ar}, ${ag}, ${ab}`);
+  root.style.setProperty('--dyn-contrast-alpha', alpha);
+  root.style.setProperty('--dyn-shadow-spread', spread);
+}

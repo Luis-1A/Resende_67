@@ -15,6 +15,7 @@
   outline: 1px solid var(--paper-outline);
   outline-offset: -10px;
   box-shadow: 0 22px 64px rgba(0, 0, 0, .62), inset 0 0 36px rgba(98, 64, 30, .12);
+  font-family: var(--font-letter);
   font-size: clamp(16px, 2.4vw, 21px);
   line-height: 1.58;
   opacity: 0;
@@ -32,12 +33,12 @@
 }
 
 #card.dk {
-  background: transparent;
+  background: none;
   color: var(--text-light);
   border: none;
   outline: none;
   box-shadow: none;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, .92);
+  text-shadow: var(--dyn-text-shadow-base);
   text-align: center;
 }
 

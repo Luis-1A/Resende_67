@@ -1,0 +1,14 @@
+.b.on {
+  text-shadow: var(--dyn-text-shadow-base);
+}
+
+.b.name,
+.b.name.on {
+  color: #FFF7D8;
+  filter: none;
+  text-shadow: var(--dyn-text-shadow-shine);
+}
+
+.b.big.on {
+  text-shadow: var(--dyn-text-shadow-shine);
+}

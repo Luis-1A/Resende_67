@@ -1,0 +1,225 @@
+.tj-stage {
+  position: fixed;
+  left: 50%;
+  width: min(92vw, 840px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.7rem;
+  pointer-events: none;
+  z-index: 6;
+  padding: 0.5rem 1rem;
+  background: none;
+}
+
+.tj-stage.pos-center {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tj-stage.pos-center-high {
+  top: 39%;
+  transform: translate(-50%, -50%);
+}
+
+.tj-stage.pos-upper {
+  top: 23%;
+  transform: translate(-50%, -50%);
+}
+
+.tj-stage.pos-low {
+  top: 63%;
+  transform: translate(-50%, -50%);
+}
+
+.tj-line,
+.tj-kicker,
+.tj-month,
+.tj-date-outline,
+.tj-caption,
+.tj-caption-strong,
+.tj-chapter {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    text-shadow 0.8s ease;
+  text-wrap: balance;
+}
+
+.tj-line.vis,
+.tj-kicker.vis,
+.tj-month.vis,
+.tj-date-outline.vis,
+.tj-caption.vis,
+.tj-caption-strong.vis,
+.tj-chapter.vis {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tj-line {
+  font-family: var(--font-editorial);
+  font-size: clamp(20px, 4.7vw, 32px);
+  color: #FFFFFF;
+  line-height: 1.42;
+  text-shadow: var(--dyn-text-shadow-base);
+}
+
+.tj-mask.vis {
+  animation: tjMaskReveal 1.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tj-mask.fade-out {
+  opacity: 0 !important;
+  transform: scale(0.95);
+  transition: opacity 0.85s ease, transform 0.85s ease;
+}
+
+.tj-date-outline {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 6.2vw, 44px);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #FFFDF2;
+  text-shadow: var(--dyn-text-shadow-shine);
+  animation: tjOutlineToFill 1.5s ease both;
+}
+
+.tj-caption {
+  font-family: var(--font-letter);
+  font-size: clamp(17px, 3.8vw, 24px);
+  font-style: italic;
+  color: #FFF4D6;
+  text-shadow: var(--dyn-text-shadow-base);
+}
+
+.tj-kicker {
+  font-family: var(--font-display);
+  font-size: clamp(13px, 3vw, 18px);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: #FFE9A8;
+  text-shadow: var(--dyn-text-shadow-display);
+}
+
+.tj-month {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 7.6vw, 54px);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #FFFFFF;
+  text-shadow: var(--dyn-text-shadow-shine);
+  animation: tjMonthRise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.tj-stats {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(1rem, 5vw, 2.8rem);
+  margin: 0.4rem 0 0.65rem;
+}
+
+.tj-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  opacity: 0;
+  transform: scale(0.84) translateY(8px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tj-stat.vis {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.tj-stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 9.6vw, 72px);
+  font-weight: 800;
+  line-height: 1;
+  color: #FFFDF4;
+  text-shadow: var(--dyn-text-shadow-shine);
+}
+
+.tj-stat-lbl {
+  font-family: var(--font-display);
+  font-size: clamp(11px, 2.7vw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #FFE9A8;
+  text-shadow: var(--dyn-text-shadow-display);
+}
+
+.tj-caption-strong {
+  font-family: var(--font-display);
+  font-size: clamp(16px, 3.9vw, 24px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #FFEFA8;
+  text-shadow: var(--dyn-text-shadow-shine);
+}
+
+.tj-chapter {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 5.6vw, 40px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  color: #FFFDF4;
+  text-shadow: var(--dyn-text-shadow-shine);
+}
+
+@keyframes tjMaskReveal {
+  0% {
+    clip-path: inset(0 50% 0 50%);
+    opacity: 0;
+  }
+  100% {
+    clip-path: inset(0 0% 0 0%);
+    opacity: 1;
+  }
+}
+
+@keyframes tjOutlineToFill {
+  0% {
+    color: rgba(255, 253, 242, 0.15);
+    -webkit-text-stroke: 1px rgba(255, 232, 162, 0.92);
+    letter-spacing: 0.2em;
+  }
+  55% {
+    color: rgba(255, 253, 242, 0.65);
+    -webkit-text-stroke: 0.6px rgba(255, 242, 200, 0.7);
+  }
+  100% {
+    color: #FFFDF2;
+    -webkit-text-stroke: 0 rgba(255, 255, 255, 0);
+    letter-spacing: 0.14em;
+  }
+}
+
+@keyframes tjMonthRise {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tj-mask.vis,
+  .tj-date-outline,
+  .tj-month {
+    animation: none;
+    clip-path: none;
+  }
+}

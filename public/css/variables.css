@@ -5,6 +5,14 @@
   --paper-ink: #362516;
   --paper-border: rgba(92, 62, 32, .26);
   --paper-outline: rgba(112, 78, 44, .16);
+  --font-display: 'Cinzel', 'Playfair Display', Georgia, serif;
+  --font-editorial: 'Playfair Display', 'Lora', Georgia, serif;
+  --font-letter: 'Lora', Georgia, serif;
+  --dyn-shadow-rgb: 3, 6, 18;
+  --dyn-ambient-rgb: 8, 16, 42;
+  --dyn-glow-rgb: 255, 224, 146;
+  --dyn-contrast-alpha: 0.96;
+  --dyn-shadow-spread: 1;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   box-sizing: border-box;

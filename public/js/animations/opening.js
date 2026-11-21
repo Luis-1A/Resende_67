@@ -6,9 +6,12 @@ export const openingAnimation = {
   worldSpace: false,
   _active: false,
 
+  _params: { skipShootingStar: false },
+
   init() {},
 
-  play() {
+  play(params = {}) {
+    this._params = { skipShootingStar: false, ...params };
     this._active = true;
   },
 
@@ -39,7 +42,7 @@ export const openingAnimation = {
     }
 
     // 4-point shooting star on curved trajectory with trailing light
-    if (st >= 3.8 && st <= 10.8) {
+    if (!this._params.skipShootingStar && st >= 3.8 && st <= 10.8) {
       const gr = ez(cl((st - 3.8) / 1.1));
       const k = cl((st - 5.0) / 3.9);
       const B = t => {

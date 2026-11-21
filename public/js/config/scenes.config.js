@@ -77,5 +77,7 @@ export const scenesConfig = [
   { id: 5, file: 'scene-06-emotional.js', transitionColor: '244,232,207' },
   { id: 6, file: 'scene-07-letter.js', transitionColor: '242,217,140' },
   { id: 7, file: 'scene-08-finale.js', transitionColor: '7,12,30' },
-  { id: 8, file: 'scene-09-secret.js', transitionColor: '7,12,30' }
+  { id: 8, file: 'scene-09-secret.js', transitionColor: '7,12,30' },
+  { id: 9, file: 'scene-10-time-journey.js', transitionColor: '255,244,214' },
+  { id: 10, file: 'scene-10-grand-finale.js', transitionColor: '3,8,23' }
 ];

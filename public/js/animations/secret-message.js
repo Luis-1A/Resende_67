@@ -88,7 +88,7 @@ export const secretMessageAnimation = {
         this._ctx.card.classList.remove('on');
         this._ctx.nx.classList.remove('on');
       }
-      return true;
+      return false;
     }
     if (this._stg === 3) {
       if (this._ctx && typeof this._ctx.onFinish === 'function') this._ctx.onFinish();

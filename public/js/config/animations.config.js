@@ -3,7 +3,6 @@ export const animationsConfig = {
   stars: { enabled: true, file: 'stars.js', css: '/css/animations/stars.css', permanent: true, starCount: 90, cloudCount: 9 },
   flowers: { enabled: true, file: 'flowers.js', css: '/css/animations/flowers.css', speed: 1 },
   balloons: { enabled: true, file: 'balloons.js', css: '/css/animations/balloons.css', count: 10, duration: 11 },
-  cake: { enabled: true, file: 'cake.js', css: '/css/animations/cake.css', delay: 1 },
   fireworks: { enabled: true, file: 'fireworks.js', css: '/css/animations/fireworks.css', intensity: 1 },
   butterflies: { enabled: true, file: 'butterflies.js', css: '/css/animations/butterflies.css', count: 5 },
   petals: { enabled: true, file: 'petals.js', css: '/css/animations/petals.css', count: 18 },
@@ -13,5 +12,7 @@ export const animationsConfig = {
   emotionalScene: { enabled: true, file: 'emotional-scene.js', speed: 1 },
   personalLetter: { enabled: true, file: 'personal-letter.js', css: '/css/animations/letter.css', exitDuration: 2.6 },
   finale: { enabled: true, file: 'finale.js', css: '/css/animations/finale.css', speed: 1 },
-  secretMessage: { enabled: true, file: 'secret-message.js', css: '/css/animations/finale.css', speed: 1 }
+  secretMessage: { enabled: true, file: 'secret-message.js', css: '/css/animations/finale.css', speed: 1 },
+  timeJourney: { enabled: true, file: 'time-journey/time-animation.js', css: '/css/animations/time-journey.css', speed: 1 },
+  grandFinale: { enabled: true, file: 'finale/finale-controller.js', css: '/css/animations/finale.css', speed: 1 }
 };

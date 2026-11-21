@@ -4,23 +4,29 @@ export default {
   darkCard: true,
   manualContinue: true,
   autoAdvance: false,
+  transitionType: 'darkFade',
   texts: [],
+  getVisualConfig() {
+    return {
+      atmosphere: {
+        skyColors: ['#02040D', '#060C22', '#0C163B'],
+        mountains: ['#0C1636', '#060B1E'],
+        mountainReveal: false,
+        ground: true,
+        groundTop: '#0B2A24',
+        cloudDensity: 0.7
+      },
+      visualScene: 'finale-visual.js',
+      effects: [
+        { name: 'stars', params: { density: 1 } },
+        { name: 'fireflies', params: { count: 14, glowIntensity: 0.65 } },
+        { name: 'petals', params: { pinkAccent: false, count: 10 } }
+      ]
+    };
+  },
   getAnimations() {
     return [
-      {
-        name: 'stars',
-        params: {
-          idle: false,
-          skyColors: ['#02040D', '#060C22', '#0C163B'],
-          starDensity: 1,
-          mountains: ['#0C1636', '#060B1E'],
-          mountainReveal: false,
-          ground: true,
-          groundTop: '#0B2A24'
-        }
-      },
-      { name: 'secretMessage' },
-      { name: 'petals', params: { pinkAccent: false } }
+      { name: 'secretMessage' }
     ];
   },
   onPointerMove(e, { animationManager }) {

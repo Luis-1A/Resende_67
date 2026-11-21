@@ -1,16 +1,82 @@
+:root {
+  /* Dynamic Canvas contrast system (updated live from Canvas sky RGB & glow, with semantic tone presets) */
+  --dyn-text-shadow-base:
+    0 1px 2px rgba(var(--dyn-shadow-rgb), var(--dyn-contrast-alpha)),
+    0 2px 8px rgba(var(--dyn-shadow-rgb), 0.9),
+    0 4px 16px rgba(var(--dyn-ambient-rgb), 0.72);
+
+  --dyn-text-shadow-display:
+    0 1px 3px rgba(var(--dyn-shadow-rgb), 0.98),
+    0 3px 12px rgba(var(--dyn-shadow-rgb), 0.92),
+    0 6px 22px rgba(var(--dyn-ambient-rgb), 0.76);
+
+  --dyn-text-shadow-shine:
+    0 1px 3px rgba(var(--dyn-shadow-rgb), 0.98),
+    0 3px 10px rgba(var(--dyn-shadow-rgb), 0.92),
+    0 0 14px rgba(255, 240, 188, 0.85),
+    0 0 30px rgba(var(--dyn-glow-rgb), 0.62),
+    0 0 calc(52px * var(--dyn-shadow-spread)) rgba(255, 198, 92, 0.36);
+}
+
+:root[data-canvas-tone="deep"] {
+  --dyn-shadow-rgb: 2, 5, 16;
+  --dyn-ambient-rgb: 8, 16, 44;
+  --dyn-glow-rgb: 255, 224, 148;
+  --dyn-contrast-alpha: 0.96;
+}
+
+:root[data-canvas-tone="garden"] {
+  --dyn-shadow-rgb: 3, 14, 18;
+  --dyn-ambient-rgb: 6, 26, 36;
+  --dyn-glow-rgb: 255, 232, 164;
+  --dyn-contrast-alpha: 0.97;
+}
+
+:root[data-canvas-tone="warm"] {
+  --dyn-shadow-rgb: 14, 6, 24;
+  --dyn-ambient-rgb: 26, 10, 42;
+  --dyn-glow-rgb: 255, 218, 134;
+  --dyn-contrast-alpha: 0.98;
+}
+
+:root[data-canvas-tone="sunset"] {
+  --dyn-shadow-rgb: 24, 6, 18;
+  --dyn-ambient-rgb: 40, 12, 28;
+  --dyn-glow-rgb: 255, 232, 168;
+  --dyn-contrast-alpha: 0.99;
+}
+
+:root[data-canvas-tone="twilight"] {
+  --dyn-shadow-rgb: 14, 5, 28;
+  --dyn-ambient-rgb: 28, 10, 48;
+  --dyn-glow-rgb: 255, 224, 166;
+  --dyn-contrast-alpha: 0.98;
+}
+
+:root[data-canvas-tone="climax"] {
+  --dyn-shadow-rgb: 2, 4, 16;
+  --dyn-ambient-rgb: 10, 18, 52;
+  --dyn-glow-rgb: 255, 228, 142;
+  --dyn-contrast-alpha: 0.98;
+}
+
 .b {
   position: fixed;
   left: 0;
   right: 0;
   text-align: center;
-  padding: 0 10vw;
+  padding: 0.5rem 10vw;
   box-sizing: border-box;
-  font-size: clamp(19px, 4.6vw, 30px);
+  font-family: var(--font-editorial);
+  font-size: clamp(19px, 4.5vw, 30px);
   color: var(--text-light);
   opacity: 0;
   transform: translateY(12px);
-  transition: opacity 1.6s cubic-bezier(.16, 1, .3, 1), transform 1.6s cubic-bezier(.16, 1, .3, 1);
-  text-shadow: 0 2px 22px rgba(0, 0, 0, .78), 0 0 8px rgba(0, 0, 0, .45);
+  transition:
+    opacity 1.6s cubic-bezier(.16, 1, .3, 1),
+    transform 1.6s cubic-bezier(.16, 1, .3, 1),
+    text-shadow 0.8s ease;
+  text-shadow: var(--dyn-text-shadow-base);
   line-height: 1.42;
   pointer-events: none;
   z-index: 4;
@@ -20,24 +86,45 @@
 .b.on {
   opacity: 1;
   transform: none;
+  background: none;
+}
+
+.b.big {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 9vw, 68px);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: 0.08em;
+  color: #FFFDF4;
+  text-shadow: var(--dyn-text-shadow-shine);
+  transition:
+    opacity 1.6s cubic-bezier(.16, 1, .3, 1),
+    transform 1.6s cubic-bezier(.16, 1, .3, 1),
+    text-shadow 0.8s ease;
+}
+
+.b.big.on {
+  animation: birthdayRadiance 3.4s ease-in-out infinite;
 }
 
 .top { top: 9%; }
-.mid { top: 22%; }
-.low { top: 37%; }
-.bot { top: 50%; }
-.b3  { top: 62%; }
+.mid { top: 21%; }
+.low { top: 38%; }
+.bot { top: 51%; }
+.b3  { top: 63%; }
 
 .tl {
   top: 8%;
   text-align: left;
-  padding: 0 8vw;
+  padding: 0.5rem 8vw;
+  font-family: var(--font-letter);
   font-size: clamp(16px, 3.6vw, 24px);
 }
 
 .fun {
   font-style: italic;
-  color: var(--text-gold);
+  color: #FFF4D4;
+  text-shadow: var(--dyn-text-shadow-base);
 }
 
 #nt {
@@ -46,11 +133,35 @@
   right: 0;
   bottom: 3vh;
   text-align: center;
+  font-family: var(--font-letter);
   color: var(--text-light);
   font-size: 13px;
+  letter-spacing: 0.06em;
+  text-shadow: var(--dyn-text-shadow-base);
   opacity: 0;
-  transition: opacity 2s;
+  transition: opacity 2s, text-shadow 0.8s ease;
   padding: 0 8vw;
   z-index: 5;
   pointer-events: none;
+}
+
+@keyframes birthdayRadiance {
+  0%, 100% {
+    text-shadow: var(--dyn-text-shadow-shine);
+  }
+  50% {
+    text-shadow:
+      0 1px 3px rgba(var(--dyn-shadow-rgb), 0.98),
+      0 3px 12px rgba(var(--dyn-shadow-rgb), 0.92),
+      0 0 22px rgba(255, 244, 200, 0.96),
+      0 0 44px rgba(var(--dyn-glow-rgb), 0.8),
+      0 0 calc(72px * var(--dyn-shadow-spread)) rgba(255, 198, 92, 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b.big.on,
+  .name.on {
+    animation: none;
+  }
 }

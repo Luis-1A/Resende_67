@@ -3,6 +3,8 @@ import { screenManager } from './screen-manager.js';
 import { audioManager } from './audio-manager.js';
 import { animationManager } from './animation-manager.js';
 import { sceneManager } from './scene-manager.js';
+import { canvasEngine } from './visual-engine/canvas-engine.js';
+import { canvasManager } from './visual-engine/canvas-manager.js';
 
 const $ = id => document.getElementById(id);
 
@@ -18,11 +20,8 @@ const dom = {
   nx: $('nx')
 };
 
-let R = 0;
-let last = 0;
 let started = false;
 
-screenManager.init(canvas);
 audioManager.init();
 animationManager.init({
   canvas,
@@ -32,15 +31,36 @@ animationManager.init({
   tx: dom.tx,
   screenManager,
   settings,
-  getTime: () => R,
+  getTime: () => canvasEngine.getTime(),
   onFinish: () => sceneManager.finish()
 });
 sceneManager.init(dom);
 
-// Load only lightweight idle stars before user starts
-await animationManager.activateScene([
-  { name: 'stars', params: { idle: true } }
-]);
+canvasEngine.init({
+  canvas,
+  animationManager,
+  onTick: (dt, R) => {
+    if (!started) {
+      const bounds = screenManager.getBounds();
+      return { ...bounds, sc: -1, R, t0: 0, sceneElapsed: R, exiting: null, tm: [], fin: false, RM: settings.reducedMotion };
+    }
+    return sceneManager.tick(dt, R);
+  }
+});
+
+// Configure lightweight starry sky & gentle fireflies for initial screen
+await canvasManager.configureScene({
+  atmosphere: {
+    skyColors: ['#050C20', '#0A1636', '#11224D'],
+    mountains: null,
+    ground: false,
+    cloudDensity: 0.45
+  },
+  effects: [
+    { name: 'stars', params: { density: 0.9 } },
+    { name: 'fireflies', params: { count: 10, glowIntensity: 0.55 } }
+  ]
+});
 
 dom.nx.onclick = e => {
   e.stopPropagation();
@@ -64,27 +84,10 @@ addEventListener('pointerdown', e => {
       }
     });
     dom.st.style.display = 'none';
-    sceneManager.load(0, R);
+    sceneManager.load(0, canvasEngine.getTime());
     return;
   }
   sceneManager.handlePointerDown(e);
 });
 
-function frame(ts) {
-  requestAnimationFrame(frame);
-  const dt = Math.min(settings.maxDeltaSeconds, (ts - last) / 1000 || .016);
-  last = ts;
-  R += dt;
-
-  if (!started) {
-    const bounds = screenManager.getBounds();
-    const env = { ...bounds, sc: -1, R, t0: 0, sceneElapsed: R, exiting: null, tm: [], fin: false, RM: settings.reducedMotion };
-    animationManager.update(dt, env);
-    animationManager.render(ctx2d, env);
-    return;
-  }
-
-  sceneManager.tick(dt, R);
-}
-
-requestAnimationFrame(frame);
+canvasEngine.start();
