@@ -1,4 +1,5 @@
 import express from 'express';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -11,6 +12,20 @@ const HOST = '0.0.0.0';
 
 // Serve static assets from public directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Check if an optional local audio file exists in public/audio/
+app.get('/api/audio-source', (req, res) => {
+  const candidates = ['saturn.mp3', 'saturn.m4a', 'saturn.ogg', 'saturn.wav'];
+  const audioDir = path.join(__dirname, 'public', 'audio');
+  let localUrl = null;
+  for (const name of candidates) {
+    if (fs.existsSync(path.join(audioDir, name))) {
+      localUrl = `/audio/${name}`;
+      break;
+    }
+  }
+  res.json({ localUrl });
+});
 
 // Fallback to index.html
 app.get('*', (req, res) => {

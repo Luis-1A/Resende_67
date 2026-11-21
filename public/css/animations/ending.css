@@ -1,0 +1,87 @@
+#ending-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000000;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#ending-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ending-fim-wrap {
+  width: min(64vw, 310px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.ending-fim-wrap.vis {
+  opacity: 1;
+}
+
+.ending-fim-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 14px rgba(255, 244, 214, 0.16));
+}
+
+.ending-fim-stroke {
+  fill: none;
+  stroke: #F7F3EA;
+  stroke-width: 3.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ending-fim-dot {
+  fill: none;
+  stroke: #F7F3EA;
+  stroke-width: 4.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ending-fim-nib {
+  fill: #FFF8E6;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.ending-fim-nib.active {
+  opacity: 0.95;
+}
+
+.ending-fim-wrap.done .ending-fim-svg {
+  animation: endingBreath 5s ease-in-out infinite;
+}
+
+@keyframes endingBreath {
+  0%, 100% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 12px rgba(255, 244, 214, 0.14));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 18px rgba(255, 244, 214, 0.28));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #ending-overlay {
+    transition-duration: 0.8s;
+  }
+  .ending-fim-wrap.done .ending-fim-svg {
+    animation: none;
+  }
+}

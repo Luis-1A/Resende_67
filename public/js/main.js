@@ -76,6 +76,7 @@ addEventListener('pointerdown', e => {
   if (!started) {
     started = true;
     screenManager.setRunning(true);
+    audioManager.start();
     screenManager.requestWakeLock().then(ok => {
       if (!ok && !('wakeLock' in navigator)) {
         dom.nt.textContent = 'Para aproveitar a homenagem inteira sem interrupções, recomendamos manter o navegador aberto.';
@@ -87,7 +88,14 @@ addEventListener('pointerdown', e => {
     sceneManager.load(0, canvasEngine.getTime());
     return;
   }
+  audioManager.ensurePlaying();
   sceneManager.handlePointerDown(e);
+});
+
+addEventListener('click', () => {
+  if (started) {
+    audioManager.ensurePlaying();
+  }
 });
 
 canvasEngine.start();

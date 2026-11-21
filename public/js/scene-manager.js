@@ -5,6 +5,7 @@ import { canvasManager } from './visual-engine/canvas-manager.js';
 import { transitionSystem } from './visual-engine/transition-system.js';
 import { screenManager } from './screen-manager.js';
 import { audioManager } from './audio-manager.js';
+import { endingSequence } from './ending-sequence.js';
 
 export const sceneManager = {
   sc: -1,
@@ -160,6 +161,7 @@ export const sceneManager = {
       d.style.opacity = '.72';
       this._dom.tx.appendChild(d);
     }
+    endingSequence.start({ dom: this._dom });
   },
 
   tick(dt, R) {
