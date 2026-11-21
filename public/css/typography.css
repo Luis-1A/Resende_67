@@ -146,6 +146,34 @@
   pointer-events: none;
 }
 
+.star-hint {
+  position: fixed;
+  left: 50%;
+  top: calc(34% + clamp(36px, 8.5vmin, 76px));
+  transform: translateX(-50%);
+  text-align: center;
+  font-family: var(--font-letter);
+  font-size: clamp(10px, 2.2vw, 12px);
+  letter-spacing: 0.14em;
+  color: rgba(255, 249, 230, 0.72);
+  text-shadow: var(--dyn-text-shadow-base);
+  opacity: 0;
+  transition: opacity 1.4s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 4;
+}
+
+.star-hint.on {
+  opacity: 0.78;
+  animation: starHintPulse 3.6s ease-in-out infinite;
+}
+
+@keyframes starHintPulse {
+  0%, 100% { opacity: 0.78; }
+  50% { opacity: 0.42; }
+}
+
 @keyframes birthdayRadiance {
   0%, 100% {
     opacity: 0.95;
@@ -159,7 +187,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .b.big.on,
-  .name.on {
+  .name.on,
+  .star-hint.on {
     animation: none;
   }
 }
