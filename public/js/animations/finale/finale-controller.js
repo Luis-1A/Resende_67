@@ -1,7 +1,7 @@
 import { cl, ez, L, glow, CG, G, TAU, hexToRgb, syncDynamicTextContrast } from '../../utils.js';
 import { particleSystem } from '../../visual-engine/particle-system.js';
 import { finaleAudioSync } from './finale-audio-sync.js';
-import { finaleTimeline } from './finale-timeline.js';
+import { finaleTimeline, FINALE_SPEED_SCALE } from './finale-timeline.js';
 import { FINALE_PALETTES } from './config/finale-effects.js';
 
 import { finaleGoldenParticles } from './effects/golden-particles.js';
@@ -219,13 +219,14 @@ export const grandFinaleAnimation = {
   update(dt, env) {
     if (!this._active) return;
 
+    const sDt = Math.min(0.05, Math.max(0, dt)) * FINALE_SPEED_SCALE;
     const api = this._buildContext();
     finaleTimeline.step(dt, api);
 
     // Smooth atmosphere interpolation
     const a = this._atmo;
     if (a.colBlend < 1) {
-      a.colBlend = cl(a.colBlend + dt * 0.42);
+      a.colBlend = cl(a.colBlend + sDt * 0.42);
       const ek = ez(a.colBlend);
       for (let i = 0; i < 3; i++) {
         a.curCols[i] = [
@@ -235,24 +236,24 @@ export const grandFinaleAnimation = {
         ];
       }
     }
-    a.horizonGlow = L(a.horizonGlow, a.targetHorizonGlow, cl(dt * 1.4));
-    a.lightRays = L(a.lightRays, a.targetLightRays, cl(dt * 1.4));
-    a.dim = L(a.dim, a.targetDim, cl(dt * 1.6));
-    this._camZoom = L(this._camZoom, this._targetCamZoom, cl(dt * 1.6));
+    a.horizonGlow = L(a.horizonGlow, a.targetHorizonGlow, cl(sDt * 1.4));
+    a.lightRays = L(a.lightRays, a.targetLightRays, cl(sDt * 1.4));
+    a.dim = L(a.dim, a.targetDim, cl(sDt * 1.6));
+    this._camZoom = L(this._camZoom, this._targetCamZoom, cl(sDt * 1.6));
 
     // Sync typography.css dynamic contrast variables live to the interpolated Canvas sky & glow
     syncDynamicTextContrast(a.curCols[1], cl(a.horizonGlow + a.lightRays * 1.4 - a.dim * 0.4));
 
     // Update all continuous effects cleanly (never reset across act transitions)
-    finaleStars.update(dt);
-    finaleGoldenParticles.update(dt, env);
-    finaleFireworks.update(dt);
-    finaleLanterns.update(dt, env);
-    finaleFlowers.update(dt);
-    finaleBalloons.update(dt, env);
-    finaleConfetti.update(dt, env);
-    finaleButterflies.update(dt, env);
-    finalePetals.update(dt, env);
+    finaleStars.update(sDt);
+    finaleGoldenParticles.update(sDt, env);
+    finaleFireworks.update(sDt);
+    finaleLanterns.update(sDt, env);
+    finaleFlowers.update(sDt);
+    finaleBalloons.update(sDt, env);
+    finaleConfetti.update(sDt, env);
+    finaleButterflies.update(sDt, env);
+    finalePetals.update(sDt, env);
 
     if (finaleTimeline.finished && !this._completed) {
       this._completed = true;

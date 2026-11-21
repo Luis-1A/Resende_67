@@ -1,5 +1,5 @@
 import { cl, ez, L, rnd, syncDynamicTextContrast } from '../../utils.js';
-import { BIRTH_DATE, calculateExactAge } from './calendar-animation.js';
+import { BIRTH_DATE_STR, calculateExactAge } from './calendar-animation.js';
 import { ParticleEngine } from './particle-engine.js';
 import { starAnimation } from './star-animation.js';
 import { flowerAnimation } from './flower-animation.js';
@@ -11,6 +11,7 @@ import { cameraAnimation } from './camera-animation.js';
 import { transitionAnimation } from './transition-animation.js';
 
 export const TIME_JOURNEY_DURATION = 55;
+export const TIME_JOURNEY_SPEED = 1.25;
 
 export const timeSceneManager = {
   elapsed: 0,
@@ -48,7 +49,7 @@ export const timeSceneManager = {
     this._engine.configureQuality({ lowPower, maxCap: lowPower ? 360 : 720 });
     this._engine.clear();
 
-    this._age = calculateExactAge(BIRTH_DATE, new Date());
+    this._age = calculateExactAge(BIRTH_DATE_STR, new Date());
 
     starAnimation.init(lowPower ? 65 : 105);
     flowerAnimation.init();
@@ -104,7 +105,7 @@ export const timeSceneManager = {
 
   update(dt, env) {
     if (this._paused || this.finished) return;
-    const safeDt = Math.min(0.05, Math.max(0, dt));
+    const safeDt = Math.min(0.065, Math.max(0, dt) * TIME_JOURNEY_SPEED);
     this.elapsed = Math.min(TIME_JOURNEY_DURATION, this.elapsed + safeDt);
     const t = this.elapsed;
 

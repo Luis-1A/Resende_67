@@ -1,5 +1,7 @@
 import { FINALE_ACTS, FINALE_DURATION } from './config/finale-timing.js';
 
+export const FINALE_SPEED_SCALE = 1.32;
+
 export const finaleTimeline = {
   elapsed: 0,
   finished: false,
@@ -25,8 +27,8 @@ export const finaleTimeline = {
 
   step(dt, ctx) {
     if (this.finished) return;
-    // Clamp step to avoid catch-up spikes after tab pause or hiccups
-    const safeDt = Math.min(0.05, Math.max(0, dt));
+    // Clamp step to avoid catch-up spikes after tab pause or hiccups, scaled naturally by FINALE_SPEED_SCALE
+    const safeDt = Math.min(0.05, Math.max(0, dt)) * FINALE_SPEED_SCALE;
     this.elapsed = Math.min(FINALE_DURATION, this.elapsed + safeDt);
     const t = this.elapsed;
 
